@@ -1,6 +1,5 @@
 from dotenv import load_dotenv
 import os
-import sys
 from javascript import require, On
 
 mineflayer = require("mineflayer")
@@ -12,9 +11,17 @@ BOT_USERNAME = "TextMCBot"
 
 
 class BuilderBot:
-    def __init__(self) -> None:
+    def __init__(self, host, port) -> None:
         self.API_KEY = os.getenv("OPENAI_APY_KEY")
-        self.bot = mineflayer.createBot({"host": "localhost", "username": BOT_USERNAME})
+        self.bot = mineflayer.createBot(
+            {
+                "host": host,
+                "port": port,
+                "username": BOT_USERNAME,
+                "version": "1.20.4",
+                "hideErrors": False,
+            }
+        )
         self.bot.loadPlugin(pathfinder.pathfinder)
         print("Started mineflayer")
         self.setup_listeners()
