@@ -1,36 +1,29 @@
 import sys
-from javascript import require, On, Once, AsyncTask, once, off
+from javascript import require, On, once
 
 # from bot import BuilderBot
 mineflayer = require("mineflayer")
 
 # import mineflayer
 
-if len(sys.argv) != 3:
-    print("Usage : python main.py <host> <port>")
-    sys.exit()
+# if len(sys.argv) != 3:
+#     print("Usage : python main.py <host> <port>")
+#     sys.exit()
 
-host = sys.argv[1]
-try:
-    port = int(sys.argv[2])
-except ValueError:
-    print(f"Invalid port argument '{sys.argv[2]}'")
-    sys.exit()
+# host = sys.argv[1]
+# try:
+#     port = int(sys.argv[2])
+# except ValueError:
+#     print(f"Invalid port argument '{sys.argv[2]}'")
+#     sys.exit()
 
 bot = mineflayer.createBot(
-    {
-        "username": "TextMCBot",
-        "auth": "microsoft",
-        "host": host,
-        "port": port,
-        "version": "1.20.4",
-    }
+    {"host": "35.21.128.1", "port": 53858, "username": "TextMCBot"}
 )
 
-
-@On(bot, "login")
-def login(this):
-    pass
+once(bot, "login")
+bot.chat("I spawned")
+print(bot.entity.position)
 
 
 # b = BuilderBot(host, port)
