@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "text-to-minecraft"
+version = "0.1.0"
+description = "An AI that constructs structures in Minecraft for you!"
+authors = ["ryyHardy <ryyhardy@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+python-dotenv = "^1.0.1"
+javascript = "^1!1.2.1"
+mineflayer = "^0.0.14"
+openai = "^1.51.0"
+langchain = "^0.3.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

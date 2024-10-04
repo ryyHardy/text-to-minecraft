@@ -10,6 +10,7 @@ load_dotenv()
 BOT_USERNAME = "TextMCBot"
 API_KEY = os.getenv("OPENAI_APY_KEY")
 
+
 class BuilderBot:
     def __init__(self, host: str, port: int) -> None:
         self.bot = mineflayer.createBot(
