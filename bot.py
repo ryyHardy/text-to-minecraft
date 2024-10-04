@@ -8,17 +8,15 @@ pathfinder = require("mineflayer-pathfinder")
 load_dotenv()
 
 BOT_USERNAME = "TextMCBot"
-
+API_KEY = os.getenv("OPENAI_APY_KEY")
 
 class BuilderBot:
-    def __init__(self, host, port) -> None:
-        self.API_KEY = os.getenv("OPENAI_APY_KEY")
+    def __init__(self, host: str, port: int) -> None:
         self.bot = mineflayer.createBot(
             {
                 "host": host,
                 "port": port,
                 "username": BOT_USERNAME,
-                "version": "1.20.4",
                 "hideErrors": False,
             }
         )
@@ -39,7 +37,7 @@ class BuilderBot:
             if sender and (sender != BOT_USERNAME):
                 if "come" in message:
                     player = self.bot.players[sender]
-                    print("Target", player)
+                    # print("Target", player)
                     target = player.entity
                     if not target:
                         self.bot.chat("I don't see you!")
