@@ -1,21 +1,18 @@
 import sys
 from bot import BuilderBot
 
-def main():
-    if len(sys.argv) != 3:
-        print("Usage : python main.py <host> <port>")
-        return
-    
-    host = sys.argv[1] 
-    # Host IP should be the server IP, or if it is a LAN world, the IPV4 address of your wireless LAN adapter
-    # Run "ipconfig" to get that IP if you don't know it.
+def parse_args(args: list[str]):
+    if len(args) != 2:
+        raise ValueError("Usage : python main.py <host> <port>")
+    host = args[0]
     try:
-        port = int(sys.argv[2])
+        port = int(args[1])
     except ValueError:
-        print(f"Invalid port argument '{sys.argv[2]}'")
-        return
-    
-    b = BuilderBot(host, port)
+        raise ValueError(f"Port argument {args[1]} is not an integer")
+    return (host, port)
+
+def main():
+    b = BuilderBot(*parse_args(sys.argv[1:]))
     print(f"Bot spawned at {b.bot.entity.position}")
 
 
