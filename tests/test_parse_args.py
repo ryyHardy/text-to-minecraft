@@ -8,13 +8,13 @@ def test_parse_args_basic():
 
 def test_parse_args_too_many():
     with pytest.raises(ValueError):
-        host, port = parse_args(["mc.hypixel.net", "25565", "some third thing"])
+        parse_args(["mc.hypixel.net", "25565", "some third thing"])
 
 def test_parse_args_too_few():
     with pytest.raises(ValueError):
-        host, port = parse_args(["mc.hypixel.net"])
+        parse_args(["mc.hypixel.net"])
 
 def test_parse_args_port_not_int():
     with pytest.raises(ValueError):
-        host, port = parse_args(["mc.hypixel.net", "abcde"])
+        parse_args(["mc.hypixel.net", "abcde"])
     

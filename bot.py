@@ -1,4 +1,5 @@
 from dotenv import load_dotenv
+import sys
 import os
 from javascript import require, On
 from openai import OpenAI
@@ -65,4 +66,5 @@ class BuilderBot:
         @On(self.bot, "end")
         def on_end(*args):
             """Ends the bot"""
-            print("Bot ended", args)
+            print("Bot ended")
+            sys.exit()
