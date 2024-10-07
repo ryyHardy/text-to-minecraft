@@ -13,7 +13,6 @@ def parse_args(args: list[str]):
 
 def main():
     b = BuilderBot(*parse_args(sys.argv[1:]))
-    print(f"Bot spawned at {b.bot.entity.position}")
 
 
 if __name__ == "__main__":
