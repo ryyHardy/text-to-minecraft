@@ -3,6 +3,10 @@
 > A bot to help you with all your Minecraft-related needs!
 
 TextToMinecraft is a bot that can perform all kinds of Minecraft-related tasks, and it can even build structures for you! All you need to do is chat with the bot in-game like you would with ChatGPT or other LLMs, and it will perform what you describe to the best of its ability.
+
+> ### WARNING:
+> 
+> This project is still very much a work-in-progress, so use with caution if you plan on testing it in a Minecraft world.
 <!--
 ![](header.png)
 
