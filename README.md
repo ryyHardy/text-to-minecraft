@@ -29,6 +29,8 @@ Usage examples with screenshots coming soon!
 1. Clone the repository on your machine.
 2. Create a Python virtual environment in the project directory, and be sure to activate it so nothing gets installed globally.
 3. Run ``pip install .`` to install all the dependencies from ``pyproject.toml``.
+4. Substitute your OpenAI API key (if you have one) in ``.env.sample`` and rename that file to ``.env``.
+5. Start coding! Be aware of the pricing for OpenAI API access when you run the program.
 <!--
 ## Release History
 
