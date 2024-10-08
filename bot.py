@@ -1,23 +1,19 @@
-from dotenv import load_dotenv
-import sys
-import os
-from javascript import require, On
-from openai import OpenAI
 
+from __future__ import annotations
+
+from javascript import On, require
 mineflayer = require("mineflayer")
 pathfinder = require("mineflayer-pathfinder")
 
-load_dotenv()
+from llm import MinecraftCodeGenerator
 
 BOT_USERNAME = "TextMCBot"
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-CHATBOT_ROLE = "You are a helpful Minecraft player. For every question, answer in the context of Minecraft."
-# ^ Consider changing later on if this has issues
 
+def place_block(bot: BuilderBot, block_type, x, y, z):
+    bot.chat(f"/setblock {x} {y} {z} {block_type}")
 
 class BuilderBot:
     def __init__(self, host: str, port: int) -> None:
-        self.openai_client = OpenAI(api_key=OPENAI_API_KEY)
         self.bot = mineflayer.createBot(
             {
                 "host": host,
@@ -26,15 +22,18 @@ class BuilderBot:
                 "hideErrors": False,
             }
         )
+        print(f"Attempting to join server {host} on port {port}...")
         self.bot.loadPlugin(pathfinder.pathfinder)
         print("Started mineflayer")
         self.setup_listeners()
 
     def setup_listeners(self):
         @On(self.bot, "spawn")
-        def handle_spawn(*args):
+        def on_spawn(*args):
             """Spawns the bot"""
+            print("Connection successful!")
             self.bot.chat("Hello!")
+            self.client = MinecraftCodeGenerator()
             self.movements = pathfinder.Movements(self.bot)
 
         @On(self.bot, "chat")
@@ -42,7 +41,7 @@ class BuilderBot:
             """Handles chats"""
             if not sender or sender == BOT_USERNAME: # Ignore if sender is nonexistent or the bot itself
                 return
-            if message.lower() == "come": #! "come" command
+            if "come" in message.split(" "): #! "come" command
                 player = self.bot.players[sender]
                 target = player.entity
                 if not target:
@@ -53,18 +52,15 @@ class BuilderBot:
                 self.bot.pathfinder.setGoal(
                     pathfinder.goals.GoalNear(pos.x, pos.y, pos.z, 1)
                 )
-            else: #! Otherwise, get response using the LLM
-                completion = self.openai_client.chat.completions.create(
-                    model="gpt-4o-mini",
-                    messages=[
-                        {"role": "system", "content": CHATBOT_ROLE},
-                        {"role": "user", "content": message}
-                    ]
-                )
-                self.bot.chat(completion.choices[0].message.content)
+            elif "build" in message.split(" ")[0]:
+                response = self.client.generate_code(message)
+                print(response)
+                bot = self.bot
+                exec(response)
+               
 
         @On(self.bot, "end")
         def on_end(*args):
             """Ends the bot"""
             print("Bot ended")
-            sys.exit()
+            exit(0)
