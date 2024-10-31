@@ -166,5 +166,5 @@ cython_debug/
 # || OTHER IGNORES
 
 # data that is too large to push to remote
-data/mc_schematics/
-data/mc_schematics.zip
+data/filtered_schematics_json
+data/filtered_schematics_json.zip
