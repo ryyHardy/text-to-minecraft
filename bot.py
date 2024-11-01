@@ -7,6 +7,7 @@ pathfinder = require("mineflayer-pathfinder")
 
 from llm import MinecraftCodeGenerator
 
+
 BOT_USERNAME = "TextMCBot"
 
 def place_block(bot: BuilderBot, block_type, x, y, z):
@@ -56,8 +57,13 @@ class BuilderBot:
                 response = self.client.generate_code(message)
                 print(response)
                 bot = self.bot
-                exec(response)
-               
+                
+                global x, y, z, block_type
+                try:
+                    exec(response)
+                except Exception as e:
+                    print(f"An error occured in the generated code: {e}")
+            
 
         @On(self.bot, "end")
         def on_end(*args):

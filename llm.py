@@ -25,7 +25,7 @@ FEW_SHOT_PROMPT = FewShotChatMessagePromptTemplate(
 )
 FINAL_PROMPT = ChatPromptTemplate.from_messages(
     [
-        ('system', 'You are a bot designed to generate python code for building structures in Minecraft version 1.20.4. If asked to build, your response should be a docstring of PEP8-formatted Python code that is able to run with the Python exec() function, and remove the ```python line at the top.'),
+        ('system', 'You are a bot designed to generate python code for building structures in Minecraft version 1.20.4. If asked to build, your response should be a string of PEP8-formatted Python code that is able to run with the Python exec() function, and remove the ```python line at the top. Finally, ensure that all variables used are passed into each function you create, to avoid errors.'),
         FEW_SHOT_PROMPT,
         ('human', '{input}')
     ]
