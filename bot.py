@@ -6,12 +6,11 @@ mineflayer = require("mineflayer")
 pathfinder = require("mineflayer-pathfinder")
 
 from llm import MinecraftCodeGenerator
+from skills import build_from_json
 
 
 BOT_USERNAME = "TextMCBot"
 
-def place_block(bot: BuilderBot, block_type, x, y, z):
-    bot.chat(f"/setblock {x} {y} {z} {block_type}")
 
 class BuilderBot:
     def __init__(self, host: str, port: int) -> None:
@@ -53,17 +52,9 @@ class BuilderBot:
                 self.bot.pathfinder.setGoal(
                     pathfinder.goals.GoalNear(pos.x, pos.y, pos.z, 1)
                 )
-            elif "build" in message.split(" ")[0]:
+            elif "build" in message.split(" ")[0]: # TODO: Make this condition not awful
                 response = self.client.generate_code(message)
-                print(response)
-                bot = self.bot
-                
-                global x, y, z, block_type
-                try:
-                    exec(response)
-                except Exception as e:
-                    print(f"An error occured in the generated code: {e}")
-            
+                build_from_json(self.bot, response)
 
         @On(self.bot, "end")
         def on_end(*args):
