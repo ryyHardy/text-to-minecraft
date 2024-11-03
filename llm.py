@@ -18,10 +18,12 @@ class MinecraftBuild(BaseModel):
     blocks: list[Block] = Field(description="List of blocks in the schematic")
 
 # TODO: These examples suck and they result in all the builds being very small. Try to change them at some point
+# ! Currently, we have two short examples and one long example from the /data folder. It has trouble with that one.
+ex1 = open("./data/filtered_schematics_json/11.json","r")
 EXAMPLES = [
     {
-        "input": "build a house foundation with two levels",
-        "output": '{"schematic_name": "Two-Level House Foundation", "blocks": [{"block_type": "stone_bricks", "x": 0, "y": 0, "z": 0}, {"block_type": "stone_bricks", "x": 1, "y": 0, "z": 0}, {"block_type": "stone_bricks", "x": 2, "y": 0, "z": 0}, {"block_type": "stone_bricks", "x": 0, "y": 1, "z": 0}, {"block_type": "air", "x": 1, "y": 1, "z": 0}, {"block_type": "stone_bricks", "x": 2, "y": 1, "z": 0}, {"block_type": "stone_bricks", "x": 0, "y": 1, "z": 1}, {"block_type": "stone_bricks", "x": 2, "y": 1, "z": 1}]}'
+        "input": "build a hotel",
+        "output": f'{ex1.read()}'
     }, 
     {
         "input": "build a simple fountain and make it symmetrical",
@@ -32,6 +34,7 @@ EXAMPLES = [
         "output": '{"schematic_name": "Automated Redstone Door", "blocks": [{"block_type": "lever", "x": 0, "y": 1, "z": 0}, {"block_type": "redstone_wire", "x": 1, "y": 0, "z": 0}, {"block_type": "redstone_repeater", "x": 2, "y": 0, "z": 0}, {"block_type": "iron_door", "x": 3, "y": 0, "z": 0}, {"block_type": "redstone_torch", "x": 4, "y": 1, "z": 0}, {"block_type": "redstone_wire", "x": 3, "y": 1, "z": 1}]'
     }
 ]
+ex1.close()
 
 EXAMPLE_PROMPT = ChatPromptTemplate.from_messages(
     [("human", "{input}"), ("ai", "{output}")]
@@ -42,7 +45,7 @@ FEW_SHOT_PROMPT = FewShotChatMessagePromptTemplate(
 )
 FINAL_PROMPT = ChatPromptTemplate.from_messages(
     [
-        ('system', 'You are a bot designed to generate python code for building structures in Minecraft version 1.20.4. If asked to build, your response should be in JSON in the format shown by the provided examples.'),
+        ('system', 'You are a bot designed to generate JSON describing structures in Minecraft version 1.20.4. If asked to build, your response should be in JSON in the format shown by the provided examples, but expect to build much larger structures as well.'),
         FEW_SHOT_PROMPT,
         ('human', '{input}')
     ]
