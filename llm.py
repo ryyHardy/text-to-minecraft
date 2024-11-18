@@ -45,7 +45,7 @@ def load_schematics(directory: Path, max_files: int = 5):
             print(f"Error decoding JSON from {file_path.name}")
     return examples
 
-EXAMPLES = load_schematics(SCHEMATICS_DIR, max_files=4)
+EXAMPLES = load_schematics(SCHEMATICS_DIR, max_files=3)
 
 EXAMPLE_PROMPT = ChatPromptTemplate.from_messages(
     [("human", "{input}"), ("ai", "{output}")]
@@ -56,7 +56,7 @@ FEW_SHOT_PROMPT = FewShotChatMessagePromptTemplate(
 )
 FINAL_PROMPT = ChatPromptTemplate.from_messages(
     [
-        ('system', 'You are a bot designed to generate JSON describing large, detailed structures in Minecraft version 1.20.4. Your responses should be in JSON format, using coordinates and block types to represent buildings. Focus on creating significant structures such as towers, castles, or multi-room buildings. Use the provided examples as inspiration.'),
+        ('system', 'You are a bot designed to generate JSON describing large, detailed structures in Minecraft version 1.20.4. Your responses should be in JSON format, using coordinates and block types to represent buildings. Only use block types compatible with the in-game /setblock command. Focus on creating significant structures such as towers, castles, or multi-room buildings. Use the provided examples as inspiration.'),
         FEW_SHOT_PROMPT,
         ('human', '{input}')
     ]

@@ -3,8 +3,10 @@ import json
 def place_block(bot, block_type, x, y, z):
     bot.chat(f"/setblock ~{x} ~{y} ~{z} {block_type}")
 
-def build_from_json(bot, json_str: str):
+def build_from_json(bot, json_str):
     try:
+        if isinstance(json_str, dict):
+            json_str = json.dumps(json_str)
         loaded = json.loads(json_str)
         name = loaded["schematic_name"]
         blocks = loaded["blocks"]
