@@ -37,7 +37,7 @@ class BuilderBot:
             self.movements = pathfinder.Movements(self.bot)
 
         @On(self.bot, "chat")
-        def on_chat(this, sender, message, *args):
+        def on_chat(this, sender, message: str, *args):
             """Handles chats"""
             if not sender or sender == BOT_USERNAME: # Ignore if sender is nonexistent or the bot itself
                 return
@@ -52,9 +52,12 @@ class BuilderBot:
                 self.bot.pathfinder.setGoal(
                     pathfinder.goals.GoalNear(pos.x, pos.y, pos.z, 1)
                 )
-            elif "build" in message.split(" ")[0]: # TODO: Make this condition not awful
+            elif message.startswith("build "):
                 response = self.client.generate_code(message)
-                build_from_json(self.bot, response)
+                if response:
+                    build_from_json(self.bot, response)
+                else:
+                    self.bot.chat("Failed to generate a building.")
 
         @On(self.bot, "end")
         def on_end(*args):

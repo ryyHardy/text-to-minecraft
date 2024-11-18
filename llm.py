@@ -4,6 +4,11 @@ from pydantic import BaseModel, Field
 from langchain_openai import ChatOpenAI
 from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.prompts import ChatPromptTemplate, FewShotChatMessagePromptTemplate
+import json
+from pathlib import Path
+
+MAX_JSON_FILES_TO_READ = 10
+SCHEMATICS_DIR = Path("./data/filtered_schematics_json/")
 
 load_dotenv("OPENAI_API_KEY")
 
@@ -17,24 +22,30 @@ class MinecraftBuild(BaseModel):
     schematic_name: str = Field(description="Name of the schematic")
     blocks: list[Block] = Field(description="List of blocks in the schematic")
 
-# TODO: These examples suck and they result in all the builds being very small. Try to change them at some point
-# ! Currently, we have two short examples and one long example from the /data folder. It has trouble with that one.
-ex1 = open("./data/filtered_schematics_json/11.json","r")
-EXAMPLES = [
-    {
-        "input": "build a hotel",
-        "output": f'{ex1.read()}'
-    }, 
-    {
-        "input": "build a simple fountain and make it symmetrical",
-        "output": '{"schematic_name": "Simple Fountain", "blocks": [{"block_type": "stone_bricks", "x": 0, "y": 0, "z": 0}, {"block_type": "stone_bricks", "x": 1, "y": 0, "z": 0}, {"block_type": "water", "x": 0, "y": 1, "z": 1}, {"block_type": "water", "x": 1, "y": 1, "z": 1}, {"block_type": "stone_bricks", "x": 2, "y": 0, "z": 1}, {"block_type": "stone_bricks", "x": 1, "y": 0, "z": 2}, {"block_type": "stone_bricks", "x": 0, "y": 0, "z": 2}]}'
-    },
-    {
-        "input": "build an automated redstone door",
-        "output": '{"schematic_name": "Automated Redstone Door", "blocks": [{"block_type": "lever", "x": 0, "y": 1, "z": 0}, {"block_type": "redstone_wire", "x": 1, "y": 0, "z": 0}, {"block_type": "redstone_repeater", "x": 2, "y": 0, "z": 0}, {"block_type": "iron_door", "x": 3, "y": 0, "z": 0}, {"block_type": "redstone_torch", "x": 4, "y": 1, "z": 0}, {"block_type": "redstone_wire", "x": 3, "y": 1, "z": 1}]'
-    }
-]
-ex1.close()
+def load_schematics(directory: Path, max_files: int = 5):
+    """Loads a specified number of JSON schematics from a directory.
+
+    :param directory: The directory holding the schematics.
+    :type directory: Path
+    :param max_files: Maximum number of files to read (for performance purposes), defaults to 5
+    :type max_files: int, optional
+    """
+    examples = []
+    for i, file_path in enumerate(directory.glob("*.json")):
+        if i >= max_files:
+            break
+        try:
+            with open(file_path, "r") as file:
+                schematic_data = json.load(file)
+                examples.append({
+                    "input": f"Build a {schematic_data["schematic_name"]}",
+                    "output": json.dumps(schematic_data)
+                })
+        except json.JSONDecodeError:
+            print(f"Error decoding JSON from {file_path.name}")
+    return examples
+
+EXAMPLES = load_schematics(SCHEMATICS_DIR, max_files=4)
 
 EXAMPLE_PROMPT = ChatPromptTemplate.from_messages(
     [("human", "{input}"), ("ai", "{output}")]
@@ -45,7 +56,7 @@ FEW_SHOT_PROMPT = FewShotChatMessagePromptTemplate(
 )
 FINAL_PROMPT = ChatPromptTemplate.from_messages(
     [
-        ('system', 'You are a bot designed to generate JSON describing structures in Minecraft version 1.20.4. If asked to build, your response should be in JSON in the format shown by the provided examples, but expect to build much larger structures as well.'),
+        ('system', 'You are a bot designed to generate JSON describing large, detailed structures in Minecraft version 1.20.4. Your responses should be in JSON format, using coordinates and block types to represent buildings. Focus on creating significant structures such as towers, castles, or multi-room buildings. Use the provided examples as inspiration.'),
         FEW_SHOT_PROMPT,
         ('human', '{input}')
     ]
@@ -63,9 +74,16 @@ class MinecraftCodeGenerator:
         )
     
     def generate_code(self, message: str):
-        chain = (
-            FINAL_PROMPT
-            | self.client
-            | JsonOutputParser(pydantic_object=MinecraftBuild)
-        )
-        return chain.invoke({"input": message})
+        try:
+            chain = (
+                FINAL_PROMPT
+                | self.client
+                | JsonOutputParser(pydantic_object=MinecraftBuild)
+            )
+            result = chain.invoke({"input": message})
+            print(f"Generated JSON: {result}")
+            return result
+        except Exception as e:
+            print(f"Error generating code: {e}")
+            return None
+    
