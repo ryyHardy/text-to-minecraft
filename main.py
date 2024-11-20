@@ -1,3 +1,7 @@
+"""
+Entry point for the program, which takes in command line arguments to connect the bot to the server.
+"""
+
 import sys
 
 from bot import BuilderBot

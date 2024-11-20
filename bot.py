@@ -1,3 +1,7 @@
+"""
+Contains code defining the bot and its behavior using Mineflayer and the llm module.
+"""
+
 from __future__ import annotations
 
 from javascript import On, require

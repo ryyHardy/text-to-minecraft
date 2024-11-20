@@ -1,3 +1,7 @@
+"""
+Defines some custom actions the bot can do in-game.
+"""
+
 import json
 
 
