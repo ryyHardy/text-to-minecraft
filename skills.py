@@ -1,7 +1,9 @@
 import json
 
+
 def place_block(bot, block_type, x, y, z):
     bot.chat(f"/setblock ~{x} ~{y} ~{z} {block_type}")
+
 
 def build_from_json(bot, json_str):
     try:

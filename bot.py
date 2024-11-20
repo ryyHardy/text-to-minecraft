@@ -1,13 +1,12 @@
-
 from __future__ import annotations
 
 from javascript import On, require
+
 mineflayer = require("mineflayer")
 pathfinder = require("mineflayer-pathfinder")
 
 from llm import MinecraftCodeGenerator
 from skills import build_from_json
-
 
 BOT_USERNAME = "TextMCBot"
 
@@ -39,9 +38,11 @@ class BuilderBot:
         @On(self.bot, "chat")
         def on_chat(this, sender, message: str, *args):
             """Handles chats"""
-            if not sender or sender == BOT_USERNAME: # Ignore if sender is nonexistent or the bot itself
+            if (
+                not sender or sender == BOT_USERNAME
+            ):  # Ignore if sender is nonexistent or the bot itself
                 return
-            if "come" in message.split(" "): #! "come" command
+            if "come" in message.split(" "):  #! "come" command
                 player = self.bot.players[sender]
                 target = player.entity
                 if not target:
@@ -52,7 +53,7 @@ class BuilderBot:
                 self.bot.pathfinder.setGoal(
                     pathfinder.goals.GoalNear(pos.x, pos.y, pos.z, 1)
                 )
-            elif message.startswith("build "):
+            elif message.lower().startswith("build "):
                 response = self.client.generate_code(message)
                 if response:
                     build_from_json(self.bot, response)
