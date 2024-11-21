@@ -1,7 +1,3 @@
-"""
-The backend of the bot which is made with LangChain using ChatGPT as the LLM and Chroma for the vectorstore.
-"""
-
 import json
 import os
 
@@ -9,24 +5,22 @@ import os
 from pathlib import Path
 
 from dotenv import load_dotenv
-from langchain.chains.retrieval_qa.base import RetrievalQA
 from langchain_chroma.vectorstores import Chroma
-from langchain_community.document_loaders import DirectoryLoader, JSONLoader
 from langchain_core.documents import Document
 from langchain_core.output_parsers import JsonOutputParser
-from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate, FewShotChatMessagePromptTemplate
 from langchain_openai import ChatOpenAI
 from langchain_openai.embeddings import OpenAIEmbeddings
 from pydantic import BaseModel, Field
 
+load_dotenv()
+
 SCHEMATICS_DIR = Path("./data/filtered_schematics_json/")
 VECTORSTORE_DIR = Path("./data/vectorstore")
 
-MAX_FILES_TO_PROCESS = 3
-
 VECTORSTORE_DIR.mkdir(parents=True, exist_ok=True)
 
-load_dotenv("OPENAI_API_KEY")
+embeddings = OpenAIEmbeddings(openai_api_key=os.getenv("OPENAI_API_KEY"))
 
 
 class Block(BaseModel):
@@ -41,129 +35,98 @@ class MinecraftBuild(BaseModel):
     blocks: list[Block] = Field(description="List of blocks in the schematic")
 
 
-PROMPT_TEMPLATE = ChatPromptTemplate.from_messages(
-    [
-        (
-            "system",
-            "You are a bot designed to generate JSON describing large, detailed structures in Minecraft version 1.20.4. Your output must strictly follow this schema:"
-            "\n\n"
-            "MinecraftBuild Schema:\n"
-            "{{"
-            "    'schematic_name': 'string',"
-            "    'blocks': ["
-            "        {{"
-            "            'block_type': 'string',"
-            "            'x': 'integer',"
-            "            'y': 'integer',"
-            "            'z': 'integer'"
-            "        }}"
-            "    ]"
-            "}}"
-            "\n\n"
-            "The response must be a valid JSON object matching this schema. Generate detailed and creative structures like castles or towers, using block types compatible with the /setblock command.",
-        ),
-        ("human", "{input}"),
-    ]
+vectorstore = Chroma(
+    persist_directory=str(VECTORSTORE_DIR), embedding_function=embeddings
 )
 
-embeddings = OpenAIEmbeddings(openai_api_key=os.getenv("OPENAI_API_KEY"))
+retriever = vectorstore.as_retriever(search_type="similarity", search_kwargs={"k": 3})
 
-"""
-The Chroma vectorstore is created locally in the file system and it is added to with some new schematics
-each time the program runs (with an upper limit, of course). This makes the JSON examples easier to access.
-"""
 
-if VECTORSTORE_DIR.exists():
-    vectorstore = Chroma(
-        persist_directory=str(VECTORSTORE_DIR), embedding_function=embeddings
-    )
-
-    print("Checking for new schematics to add...")
-    existing_ids = set(
-        doc.metadata["id"] for doc in vectorstore.similarity_search("", k=100)
-    )
-
-    new_docs = []
+def load_json_files_to_vectorstore(
+    directory: Path, vectorstore: Chroma, max_files: int = 10
+):
+    docs = []
     count = 0
-    for file in SCHEMATICS_DIR.glob("*.json"):
-        if count >= MAX_FILES_TO_PROCESS:
+    for file in directory.glob("*.json"):
+        if count >= max_files:
             break
         with open(file, "r") as f:
             data = json.load(f)
             schematic_name = data.get("schematic_name")
-            if schematic_name not in existing_ids:
-                try:
-                    MinecraftBuild.model_validate(data, strict=True)
-                    new_docs.append(
-                        Document(
-                            page_content=json.dumps(data),
-                            metadata={"id": schematic_name},
-                        )
+            try:
+                MinecraftBuild.model_validate(data, strict=True)
+                docs.append(
+                    Document(
+                        page_content=json.dumps(data),
+                        metadata={"id": schematic_name},
                     )
-                    count += 1
-                except Exception as e:
-                    print(f"Skipping invalid file {file}: {e}")
+                )
+                count += 1
+            except Exception as e:
+                print(f"Skipping invalid file {file}: {e}")
+    vectorstore.add_documents(docs)
 
-    if new_docs:
-        vectorstore.add_documents(new_docs)
-        print(f"Added {len(new_docs)} new schematics to the vectorstore.")
-    else:
-        print("No new schematics to add.")
-else:
-    print("Creating a new vectorstore...")
-    loader = DirectoryLoader(
-        path=str(SCHEMATICS_DIR),
-        glob="*.json",
-        loader_cls=JSONLoader,
-        loader_kwargs={"jq_schema": ".", "text_content": False},
+
+def truncate_prompt(prompt, max_length: int = 1000):
+    if len(prompt) > max_length:
+        return prompt[:max_length]
+    return prompt
+
+
+def get_relevant_few_shot_prompt(query: str, retriever):
+    results = retriever.invoke(query)
+    examples = [
+        {
+            "input": result.metadata["id"],
+            "output": json.dumps(json.loads(result.page_content), indent=2),
+        }
+        for result in results
+    ]
+
+    example_prompt = ChatPromptTemplate.from_messages(
+        [("human", "{input}"), ("ai", "{output}")]
     )
+    few_shot_prompt = FewShotChatMessagePromptTemplate(
+        examples=examples, example_prompt=example_prompt
+    )
+    final_prompt = ChatPromptTemplate.from_messages(
+        [
+            (
+                "system",
+                " You are a bot designed to generate JSON describing large, detailed structures in Minecraft version 1.20.4. Your output must strictly follow the schema in the provided examples, and should consist only of block types that are compatible with the in-game /setblock command.",
+            ),
+            few_shot_prompt,
+            ("human", "{input}"),
+        ]
+    )
+    return final_prompt
 
-    docs = loader.load()
-    docs = docs[:MAX_FILES_TO_PROCESS]
 
-    valid_docs = []
-    count = 0
-    for doc in docs:
-        if count >= MAX_FILES_TO_PROCESS:
-            break
-        try:
-            json_data = json.loads(doc.page_content)
-            MinecraftBuild.model_validate(json_data, strict=True)
-            valid_docs.append(doc)
-            count += 1
-        except Exception as e:
-            print(f"Skipping invalid document: {e}")
-
-    vectorstore = Chroma.from_documents(valid_docs, embeddings)
-    print(f"New vectorstore created with {len(valid_docs)} valid schematics.")
-
-retriever = vectorstore.as_retriever(search_type="similarity", search_kwargs={"k": 3})
+load_json_files_to_vectorstore(SCHEMATICS_DIR, vectorstore)
 
 
 class MinecraftCodeGenerator:
     def __init__(self) -> None:
         self.client = ChatOpenAI(
             model="gpt-4o-mini",
-            temperature=0,
-            max_tokens=10000,  # TODO: Expeirment with different token and timeout limits
-            timeout=60,
+            temperature=0.2,
+            max_tokens=10000,
+            timeout=30,
             max_retries=2,
             api_key=os.getenv("OPENAI_API_KEY"),
         )
 
     def generate_code(self, message: str):
-        try:
-            prompt = PROMPT_TEMPLATE.format_prompt(input=message).to_string()
-            chain = RetrievalQA.from_chain_type(
-                llm=self.client, retriever=retriever, return_source_documents=True
-            )
-            result = chain.invoke({"query": prompt})
-            result = JsonOutputParser(pydantic_object=MinecraftBuild).parse(
-                result["result"]
-            )
-            print(f"Generated JSON: {result}")
-            return result
-        except Exception as e:
-            print(f"Error generating code: {e}")
-            print(e)
-            return None
+
+        relevant_few_shot_prompt = get_relevant_few_shot_prompt(message, retriever)
+
+        relevant_few_shot_prompt = truncate_prompt(relevant_few_shot_prompt)
+
+        chain = (
+            relevant_few_shot_prompt
+            | self.client
+            | JsonOutputParser(pydantic_object=MinecraftBuild)
+        )
+        result = chain.invoke({"input": message})
+        print(result)
+        return json.dumps(result)
