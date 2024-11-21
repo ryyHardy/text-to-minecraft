@@ -93,7 +93,7 @@ def get_relevant_few_shot_prompt(query: str, retriever):
         [
             (
                 "system",
-                " You are a bot designed to generate JSON describing large, detailed structures in Minecraft version 1.20.4. Your output must strictly follow the schema in the provided examples, and should consist only of block types that are compatible with the in-game /setblock command.",
+                " You are a bot designed to generate JSON describing structures in Minecraft version 1.20.4. Your output must strictly follow the schema in the provided examples, and should consist only of block types that are compatible with the in-game /setblock command.",
             ),
             few_shot_prompt,
             ("human", "{input}"),
@@ -109,7 +109,7 @@ class MinecraftCodeGenerator:
     def __init__(self) -> None:
         self.client = ChatOpenAI(
             model="gpt-4o-mini",
-            temperature=0.2,
+            temperature=0,
             max_tokens=10000,
             timeout=30,
             max_retries=2,
@@ -119,8 +119,7 @@ class MinecraftCodeGenerator:
     def generate_code(self, message: str):
 
         relevant_few_shot_prompt = get_relevant_few_shot_prompt(message, retriever)
-
-        relevant_few_shot_prompt = truncate_prompt(relevant_few_shot_prompt)
+        # relevant_few_shot_prompt = truncate_prompt(relevant_few_shot_prompt)
 
         chain = (
             relevant_few_shot_prompt
@@ -129,4 +128,4 @@ class MinecraftCodeGenerator:
         )
         result = chain.invoke({"input": message})
         print(result)
-        return json.dumps(result)
+        return result
