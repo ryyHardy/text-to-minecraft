@@ -166,4 +166,4 @@ cython_debug/
 # || OTHER IGNORES
 
 # data that is too large to push to remote
-data/
+data/*
