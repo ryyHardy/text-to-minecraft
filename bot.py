@@ -25,7 +25,7 @@ class BuilderBot:
                 "hideErrors": False,
             }
         )
-        print(f"Attempting to join server {host} on port {port}...")
+        print(f"Attempting to join server '{host}' on port {port}")
         self.bot.loadPlugin(pathfinder.pathfinder)
         print("Started mineflayer")
         self.setup_listeners()
