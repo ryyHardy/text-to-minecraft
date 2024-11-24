@@ -10,7 +10,6 @@ mineflayer = require("mineflayer")
 pathfinder = require("mineflayer-pathfinder")
 
 from llm import MinecraftCodeGenerator
-from skills import build_from_json
 
 BOT_USERNAME = "TextMCBot"
 
@@ -58,9 +57,10 @@ class BuilderBot:
                     pathfinder.goals.GoalNear(pos.x, pos.y, pos.z, 1)
                 )
             elif message.lower().startswith("build "):
-                response = self.client.generate_code(message)
-                if response:
-                    build_from_json(self.bot, response)
+                commands = self.client.generate_code(message)
+                if commands:
+                    for command in commands:
+                        self.bot.chat(command)
                 else:
                     self.bot.chat("Failed to generate a building.")
 
