@@ -1,17 +1,18 @@
-
 from __future__ import annotations
 
 from javascript import On, require
+
 mineflayer = require("mineflayer")
 pathfinder = require("mineflayer-pathfinder")
 
 from llm import MinecraftCodeGenerator
 
-
 BOT_USERNAME = "TextMCBot"
+
 
 def place_block(bot: BuilderBot, block_type, x, y, z):
     bot.chat(f"/setblock {x} {y} {z} {block_type}")
+
 
 class BuilderBot:
     def __init__(self, host: str, port: int) -> None:
@@ -40,9 +41,11 @@ class BuilderBot:
         @On(self.bot, "chat")
         def on_chat(this, sender, message, *args):
             """Handles chats"""
-            if not sender or sender == BOT_USERNAME: # Ignore if sender is nonexistent or the bot itself
+            if (
+                not sender or sender == BOT_USERNAME
+            ):  # Ignore if sender is nonexistent or the bot itself
                 return
-            if "come" in message.split(" "): #! "come" command
+            if "come" in message.split(" "):  #! "come" command
                 player = self.bot.players[sender]
                 target = player.entity
                 if not target:
@@ -55,18 +58,32 @@ class BuilderBot:
                 )
             elif "build" in message.split(" ")[0]:
                 response = self.client.generate_code(message)
-                print(response)
-                bot = self.bot
-                
-                global x, y, z, block_type
+                print("Generated code: ", response)
                 try:
-                    exec(response)
-                except Exception as e:
-                    print(f"An error occured in the generated code: {e}")
-            
+                    self.execute_code(response)
+                except RuntimeError as e:
+                    print(e)
+                    self.bot.chat("Error in generated code")
+            elif "where are you" in message.lower():
+                pos = self.bot.entity.position
+                self.bot.chat(
+                    f"I'm at X: {int(pos.x)}, Y: {int(pos.y)}, Z: {int(pos.z)}"
+                )
 
         @On(self.bot, "end")
         def on_end(*args):
             """Ends the bot"""
             print("Bot ended")
             exit(0)
+
+    def execute_code(self, code):
+        exec_context = {
+            "place_block": place_block,
+            "bot": self.bot,
+            "__builtins__": __builtins__,
+        }
+        try:
+            # or... compile(code, "<string>", "exec")
+            exec(code, exec_context)
+        except Exception as e:
+            raise RuntimeError(f"Failed to execute generated code: {e}")

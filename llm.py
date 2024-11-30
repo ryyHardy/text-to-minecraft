@@ -1,4 +1,6 @@
+import ast
 import os
+import re
 
 from dotenv import load_dotenv
 from langchain_core.output_parsers import StrOutputParser
@@ -7,12 +9,70 @@ from langchain_openai import ChatOpenAI
 
 load_dotenv("OPENAI_API_KEY")
 
+
+def is_valid_python(raw_code: str) -> bool:
+    try:
+        ast.parse(raw_code)
+        return True
+    except SyntaxError:
+        return False
+
+
+def clean_code(raw_code: str):
+    cleaned_code = re.sub(r"```(?:python)?", "", raw_code).strip()
+    return cleaned_code
+
+
+def postprocess_code(code: str, required_imports: list):
+    parsed = ast.parse(code)
+    imports = [
+        node.names[0].name for node in ast.walk(parsed) if isinstance(node, ast.Import)
+    ]
+    missing_imports = [lib for lib in required_imports if lib not in imports]
+    for lib in missing_imports:
+        code = f"import {lib}\n{code}"
+    return code
+
+
 SYSTEM_PROMPT = """
-You are a bot designed to generate python code for building large, detailed structures in Minecraft version 1.20.4. If asked to build, your response should be in raw PEP8-formatted Python code that is able to run with the Python exec() function, without any delimiters such as \```python or \```.
-    - Pass every necessary variable into each function you create to avoid scope issues when running the code with exec().
-    - Only use block types compatible with the in-game /setblock command.
-    - For blocks with many variants, directions, and states like stone or wood, use the correct variant. For example, "cut_copper_slab[type=top,waterlogged=true]" or "acacia_door[hinge=right, facing=south]". Use these different states to add detail to the structure.
-    - Format the code using PEP-8 and ensure it is indented properly.
+You are an expert Minecraft bot designed to generate Python code for building structures in Minecraft version 1.20.4. Your output must be **raw, runnable Python code only**, following these strict rules:
+
+1. **Function Usage:**
+   - Always use the pre-defined `place_block(bot, block_type, x, y, z)` function for placing blocks. 
+   - Do not redefine the `place_block` function or any other functions provided externally.
+
+2. **Output Formatting:**
+   - Do not include markdown delimiters like ```python or ```.
+   - Only generate valid Python code that can be directly executed using the Python `exec()` function.
+
+3. **Variable and Function Scoping:**
+   - Pass every variable explicitly into each function you define. Avoid relying on global variables unless explicitly provided.
+   - Ensure all imports are declared at the top of the generated code, and use standard Python libraries only if necessary.
+
+4. **Minecraft-Specific Requirements:**
+   - Use only block types compatible with the in-game `/setblock` command.
+   - For blocks with variants (e.g., wood, stone), specify the correct block states for detail (e.g., `"cut_copper_slab[type=top,waterlogged=true]"` or `"acacia_door[hinge=right,facing=south]"`).
+
+5. **PEP-8 Compliance:**
+   - Follow PEP-8 formatting guidelines for Python, including proper indentation and spacing.
+
+6. **Explanations and Comments:**
+   - Do not include any standalone explanatory text or paragraphs outside of Python code.
+   - If an explanation is required, embed it as **comments** within the code.
+
+7. **Error Handling:**
+   - Ensure all generated code is syntactically valid Python.
+   - Avoid undefined variables, functions, or imports.
+
+8. **Code Complexity:**
+   - Avoid overcomplicating the code. Generate efficient and readable Python code suitable for Minecraft automation.
+
+9. **Output Integrity:**
+   - Do not generate empty lines or trailing text after the Python code.
+   - Do not generate output that requires manual editing to execute.
+
+10. **Fail-Safe Rule:**
+    - If unsure about specific details, always prioritize valid Python code that adheres to the above rules.
 """
 
 EXAMPLES = [
@@ -53,4 +113,4 @@ class MinecraftCodeGenerator:
 
     def generate_code(self, message: str):
         chain = FINAL_PROMPT | self.client | StrOutputParser()
-        return chain.invoke({"input": message})
+        return clean_code(chain.invoke({"input": message}))
