@@ -17,6 +17,7 @@ BOT_USERNAME = "TextMCBot"
 def place_block(bot: BuilderBot, block_type, x, y, z):
     bot.chat(f"/setblock {x} {y} {z} {block_type}")
 
+
 class BuilderBot:
     def __init__(self, host: str, port: int) -> None:
         self.bot = mineflayer.createBot(
@@ -48,7 +49,7 @@ class BuilderBot:
                 not sender or sender == BOT_USERNAME
             ):  # Ignore if sender is nonexistent or the bot itself
                 return
-            if "come" in message.split(" "):  #! "come" command
+            if message.lower().startswith("$come"):
                 player = self.bot.players[sender]
                 target = player.entity
                 if not target:
@@ -59,15 +60,15 @@ class BuilderBot:
                 self.bot.pathfinder.setGoal(
                     pathfinder.goals.GoalNear(pos.x, pos.y, pos.z, 1)
                 )
-            elif message.lower().startswith("build "):
-                response = self.client.generate_code(message)
+            elif message.lower().startswith("$build"):
+                response = self.client.generate_code(message[1:])
                 print("Generated code: ", response)
                 try:
                     self.execute_code(response)
                 except RuntimeError as e:
                     print(e)
                     self.bot.chat("Error in generated code")
-            elif "where are you" in message.lower():
+            elif message.lower().startswith("$where"):
                 pos = self.bot.entity.position
                 self.bot.chat(
                     f"I'm at X: {int(pos.x)}, Y: {int(pos.y)}, Z: {int(pos.z)}"

@@ -1,5 +1,5 @@
 """
-The backend of the bot which is made with LangChain using ChatGPT as the LLM and Chroma for the vectorstore.
+The backend of the bot which is made with LangChain (using few-shot prompting) and ChatGPT as the LLM.
 """
 
 import ast
@@ -13,6 +13,7 @@ from langchain_openai import ChatOpenAI
 
 load_dotenv("OPENAI_API_KEY")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
 
 def is_valid_python(raw_code: str) -> bool:
     try:
