@@ -1,5 +1,11 @@
+"""
+Entry point for the program, which takes in command line arguments to connect the bot to the server.
+"""
+
 import sys
+
 from bot import BuilderBot
+
 
 def parse_args(args: list[str]):
     if len(args) != 2:
@@ -10,6 +16,7 @@ def parse_args(args: list[str]):
     except ValueError:
         raise ValueError(f"Port argument {args[1]} is not an integer")
     return (host, port)
+
 
 def main():
     b = BuilderBot(*parse_args(sys.argv[1:]))

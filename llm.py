@@ -1,3 +1,7 @@
+"""
+The backend of the bot which is made with LangChain using ChatGPT as the LLM and Chroma for the vectorstore.
+"""
+
 import ast
 import os
 import re
@@ -8,7 +12,7 @@ from langchain_core.prompts import ChatPromptTemplate, FewShotChatMessagePromptT
 from langchain_openai import ChatOpenAI
 
 load_dotenv("OPENAI_API_KEY")
-
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 def is_valid_python(raw_code: str) -> bool:
     try:
@@ -85,6 +89,7 @@ EXAMPLES = [
         "output": "pos = bot.entity.position\nx = int(pos.x)\ny = int(pos.y)\nz = int(pos.z)n\nbody_radius = 2\nmiddle_radius = 1\nhead_radius = 1\n\nbody_block = 'snow_block'\nhead_block = 'carved_pumpkin'\narm_block = 'oak_fence'\n\ndef place_sphere(bot, block_type, center_x, center_y, center_z, radius):\n for i in range(center_x - radius, center_x + radius + 1):\n for j in range(center_y - radius, center_y + radius + 1):\n for k in range(center_z - radius, center_z + radius + 1):\n if (i - center_x) 2 + (j - center_y) 2 + (k - center_z) 2 <= radius 2:\n place_block(bot, block_type, i, j, k)\n\nplace_sphere(bot, body_block, x, y + body_radius, z, body_radius)\nplace_sphere(bot, body_block, x, y + body_radius + 2*middle_radius, z, middle_radius)\nplace_sphere(bot, head_block, x, y + body_radius + 2*middle_radius + 2*head_radius, z, head_radius)\n\nplace_block(bot, arm_block, x - middle_radius - 1, y + body_radius + middle_radius, z)\nplace_block(bot, arm_block, x + middle_radius + 1, y + body_radius + middle_radius, z)",
     },
 ]
+
 EXAMPLE_PROMPT = ChatPromptTemplate.from_messages(
     [("human", "{input}"), ("ai", "{output}")]
 )

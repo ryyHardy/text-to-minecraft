@@ -1,3 +1,7 @@
+"""
+Contains code defining the bot and its behavior using Mineflayer and the llm module.
+"""
+
 from __future__ import annotations
 
 from javascript import On, require
@@ -13,7 +17,6 @@ BOT_USERNAME = "TextMCBot"
 def place_block(bot: BuilderBot, block_type, x, y, z):
     bot.chat(f"/setblock {x} {y} {z} {block_type}")
 
-
 class BuilderBot:
     def __init__(self, host: str, port: int) -> None:
         self.bot = mineflayer.createBot(
@@ -24,7 +27,7 @@ class BuilderBot:
                 "hideErrors": False,
             }
         )
-        print(f"Attempting to join server {host} on port {port}...")
+        print(f"Attempting to join server '{host}' on port {port}")
         self.bot.loadPlugin(pathfinder.pathfinder)
         print("Started mineflayer")
         self.setup_listeners()
@@ -39,7 +42,7 @@ class BuilderBot:
             self.movements = pathfinder.Movements(self.bot)
 
         @On(self.bot, "chat")
-        def on_chat(this, sender, message, *args):
+        def on_chat(this, sender, message: str, *args):
             """Handles chats"""
             if (
                 not sender or sender == BOT_USERNAME
@@ -56,7 +59,7 @@ class BuilderBot:
                 self.bot.pathfinder.setGoal(
                     pathfinder.goals.GoalNear(pos.x, pos.y, pos.z, 1)
                 )
-            elif "build" in message.split(" ")[0]:
+            elif message.lower().startswith("build "):
                 response = self.client.generate_code(message)
                 print("Generated code: ", response)
                 try:
