@@ -4,6 +4,9 @@ Contains code defining the bot and its behavior using Mineflayer and the llm mod
 
 from __future__ import annotations
 
+import os
+import textwrap
+
 from javascript import On, require
 
 mineflayer = require("mineflayer")
@@ -12,6 +15,9 @@ pathfinder = require("mineflayer-pathfinder")
 from llm import MinecraftCodeGenerator
 
 BOT_USERNAME = "TextMCBot"
+
+# TODO: Consider making bot chat messages private to just one player to avoid annoying other people on servers
+# As for how... I don't know yet
 
 
 def place_block(bot: BuilderBot, block_type, x, y, z):
@@ -41,15 +47,17 @@ class BuilderBot:
             "$come": self.command_come,
             "$build": self.command_build,
             "$where": self.command_where,
+            "$exec": self.command_exec,
+            "$exit": self.command_exit,
             "$help": self.command_help,
         }
 
     def setup_listeners(self):
         @On(self.bot, "spawn")
         def on_spawn(*args):
-            """Spawns the bot"""
+            """Runs when the bot connects to a world"""
             print("Connection successful!")
-            self.bot.chat("Hello!")
+            self.bot.chat("Hello! Type '$help' for a list of commands!")
             self.client = MinecraftCodeGenerator()
             self.movements = pathfinder.Movements(self.bot)
 
@@ -71,12 +79,12 @@ class BuilderBot:
 
         @On(self.bot, "end")
         def on_end(*args):
-            """Ends the bot"""
-            print("Bot ended")
-            exit(0)
+            """Called when the bot disconnects from the server"""
+            print("\nBot ended\n")
+            os._exit(0)  # TODO: Find something better than this
 
     def command_come(self, sender, args):
-        """I will walk over to you"""
+        """walk over to the sender"""
         player = self.bot.players[sender]
         target = player.entity
         if not target:
@@ -87,7 +95,7 @@ class BuilderBot:
         self.bot.pathfinder.setGoal(pathfinder.goals.GoalNear(pos.x, pos.y, pos.z, 1))
 
     def command_build(self, sender, args):
-        """I will try to build a structure based on your prompt"""
+        """try to build a structure based on the sender's prompt"""
         message = " ".join(args)  # Reconstructs the prompt
         response = self.client.generate_code(message)
         print("Generated code: ", response)
@@ -98,14 +106,28 @@ class BuilderBot:
             self.bot.chat("Error in generated code")
 
     def command_where(self, sender, args):
-        """I will tell you where I am"""
+        """announce current location"""
         pos = self.bot.entity.position
         self.bot.chat(
             f"I'm at X: {int(pos.x)}, Y: {int(pos.y)}, Z: {int(pos.z)} in the {self.bot.game.dimension}"
         )
 
+    def command_exec(self, sender, args):
+        """run a Minecraft command (ex: /tp, /setblock)"""
+        cmd = " ".join(args)
+        if cmd.startswith("/"):
+            self.bot.chat(
+                f"Attempted command: '{textwrap.shorten(cmd, width=25, placeholder="...")}'"
+            )
+            self.bot.chat(cmd)
+
+    def command_exit(self, sender, args):
+        """disconnect from the world"""
+        self.bot.chat("Bye! Disconnecting...")
+        self.bot.end()
+
     def command_help(self, sender, args):
-        help_message = "Here are the availabel commands:\n"
+        help_message = "Here are the available commands:\n"
         for command, handler in self.commands.items():
             if command != "$help":
                 help_message += f"{command} - {handler.__doc__}\n"
