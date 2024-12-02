@@ -17,7 +17,7 @@ from llm import MinecraftCodeGenerator
 BOT_USERNAME = "TextMCBot"
 
 # TODO: Consider making bot chat messages private to just one player to avoid annoying other people on servers
-# As for how... I don't know yet
+# As for how... I don't know yet. Maybe use the ingame /tellraw command?
 
 
 def place_block(bot: BuilderBot, block_type, x, y, z):
@@ -38,11 +38,11 @@ class BuilderBot:
         self.bot.loadPlugin(pathfinder.pathfinder)
         print("Started mineflayer")
         self.commands = {}
-        self.setup_commands()
+        self.bind_commands()
         self.setup_listeners()
 
-    def setup_commands(self):
-        """Registers possible commands"""
+    def bind_commands(self):
+        """Binds possible bot commands to their handlers"""
         self.commands = {
             "$come": self.command_come,
             "$build": self.command_build,
@@ -92,7 +92,12 @@ class BuilderBot:
             return
         pos = target.position
         self.bot.pathfinder.setMovements(self.movements)
-        self.bot.pathfinder.setGoal(pathfinder.goals.GoalNear(pos.x, pos.y, pos.z, 1))
+        try:
+            self.bot.pathfinder.setGoal(
+                pathfinder.goals.GoalNear(pos.x, pos.y, pos.z, 1)
+            )
+        except Exception as e:
+            self.bot.chat("An error occurred with my pathfinding! Please try again.")
 
     def command_build(self, sender, args):
         """try to build a structure based on the sender's prompt"""
@@ -103,7 +108,7 @@ class BuilderBot:
             self.execute_code(response)
         except RuntimeError as e:
             print("Error in generated code: ", e)
-            self.bot.chat("Error in generated code")
+            self.bot.chat("Error in generated code.")
 
     def command_where(self, sender, args):
         """announce current location"""
