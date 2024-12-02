@@ -120,11 +120,9 @@ class BuilderBot:
     def command_exec(self, sender, args):
         """run a Minecraft command (ex: /tp, /setblock)"""
         cmd = " ".join(args)
-        if cmd.startswith("/"):
-            self.bot.chat(
-                f"Attempted command: '{textwrap.shorten(cmd, width=25, placeholder="...")}'"
-            )
-            self.bot.chat(cmd)
+        if not cmd.startswith("/"):
+            cmd = "/" + cmd
+        self.bot.chat(cmd)
 
     def command_exit(self, sender, args):
         """disconnect from the world"""
