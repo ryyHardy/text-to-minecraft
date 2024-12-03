@@ -33,10 +33,11 @@ edit autoexec.bat
 
 ## Development setup
 
+0. Own Minecraft (and an OpenAI key).
 1. Clone the repository on your machine.
 2. Create a Python virtual environment in the project directory, and be sure to activate it so nothing gets installed globally.
 3. Run ``pip install .`` to install all the dependencies from ``pyproject.toml``.
-4. Substitute your OpenAI API key (if you have one) in ``.env.sample`` and rename that file to ``.env``.
+4. Substitute your OpenAI API key in ``.env.sample`` and rename that file to ``.env``.
 5. Download the example JSON schematics zip file from [here](https://drive.google.com/drive/folders/1q03E-f1bOjCPomgHZ7Lgc39NZP9RZczs?usp=sharing) and extract it into the /data directory.
 6. Start coding! Be aware of the pricing for OpenAI API access when you run the program.
 <!--
