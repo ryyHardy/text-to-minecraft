@@ -5,14 +5,15 @@ Contains code defining the bot and its behavior using Mineflayer and the llm mod
 from __future__ import annotations
 
 import os
-import textwrap
+from collections import namedtuple
 
 from javascript import On, require
+
+from llm import MinecraftCodeGenerator
 
 mineflayer = require("mineflayer")
 pathfinder = require("mineflayer-pathfinder")
 
-from llm import MinecraftCodeGenerator
 
 BOT_USERNAME = "TextMCBot"
 
@@ -22,6 +23,9 @@ BOT_USERNAME = "TextMCBot"
 
 def place_block(bot: BuilderBot, block_type, x, y, z):
     bot.chat(f"/setblock {x} {y} {z} {block_type}")
+
+
+Command = namedtuple("Command", ["handler", "description", "args"])
 
 
 class BuilderBot:
@@ -44,12 +48,36 @@ class BuilderBot:
     def bind_commands(self):
         """Binds possible bot commands to their handlers"""
         self.commands = {
-            "$come": self.command_come,
-            "$build": self.command_build,
-            "$where": self.command_where,
-            "$exec": self.command_exec,
-            "$exit": self.command_exit,
-            "$help": self.command_help,
+            "$come": Command(
+                handler=self.command_come,
+                description="Walk over to the sender.",
+                args=[],
+            ),
+            "$build": Command(
+                handler=self.command_build,
+                description="Build a structure based on the sender's prompt.",
+                args=["<prompt: string>"],
+            ),
+            "$where": Command(
+                handler=self.command_where,
+                description="Announce current location.",
+                args=[],
+            ),
+            "$exec": Command(
+                handler=self.command_exec,
+                description="Run a Minecraft command (e.g., /tp, /setblock).",
+                args=["<command: string>"],
+            ),
+            "$exit": Command(
+                handler=self.command_exit,
+                description="Disconnect from the world.",
+                args=[],
+            ),
+            "$help": Command(
+                handler=self.command_help,
+                description="Show this help message.",
+                args=[],
+            ),
         }
 
     def setup_listeners(self):
@@ -69,9 +97,9 @@ class BuilderBot:
             if message.startswith("$"):  # Is a command?
                 command, *args = message.split(" ")
                 command = command.lower()
-                handler = self.commands.get(command)
-                if handler:
-                    handler(sender, args)
+                command = self.commands.get(command)
+                if command:
+                    command.handler(sender, args)
                 else:
                     self.bot.chat(
                         f"Unknown command: '{command}'. Try '$help' for a list of commands"
@@ -96,11 +124,10 @@ class BuilderBot:
             self.bot.pathfinder.setGoal(
                 pathfinder.goals.GoalNear(pos.x, pos.y, pos.z, 1)
             )
-        except Exception as e:
+        except Exception:
             self.bot.chat("An error occurred with my pathfinding! Please try again.")
 
     def command_build(self, sender, args):
-        """try to build a structure based on the sender's prompt"""
         message = " ".join(args)  # Reconstructs the prompt
         response = self.client.generate_code(message)
         print("Generated code: ", response)
@@ -111,30 +138,26 @@ class BuilderBot:
             self.bot.chat("Error in generated code.")
 
     def command_where(self, sender, args):
-        """announce current location"""
         pos = self.bot.entity.position
         self.bot.chat(
             f"I'm at X: {int(pos.x)}, Y: {int(pos.y)}, Z: {int(pos.z)} in the {self.bot.game.dimension}"
         )
 
     def command_exec(self, sender, args):
-        """run a Minecraft command (ex: /tp, /setblock)"""
         cmd = " ".join(args)
         if not cmd.startswith("/"):
             cmd = "/" + cmd
         self.bot.chat(cmd)
 
     def command_exit(self, sender, args):
-        """disconnect from the world"""
         self.bot.chat("Bye! Disconnecting...")
         self.bot.end()
 
     def command_help(self, sender, args):
-        help_message = "Here are the available commands:\n"
-        for command, handler in self.commands.items():
-            if command != "$help":
-                help_message += f"{command} - {handler.__doc__}\n"
-        self.bot.chat(help_message)
+        message = "Available commands:\n"
+        for command, cmd in self.commands.items():
+            message += f"{command} {" ".join(cmd.args)} - {cmd.description}\n"
+        self.bot.chat(message)
 
     def execute_code(self, code):
         exec_context = {
