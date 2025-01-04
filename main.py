@@ -2,24 +2,12 @@
 Entry point for the program, which takes in command line arguments to connect the bot to the server.
 """
 
-import sys
-
-from bot import BuilderBot
-
-
-def parse_args(args: list[str]):
-    if len(args) != 2:
-        raise ValueError("Usage : python main.py <host> <port>")
-    host = args[0]
-    try:
-        port = int(args[1])
-    except ValueError:
-        raise ValueError(f"Port argument {args[1]} is not an integer")
-    return (host, port)
+from GUI import BotControllerGUI
 
 
 def main():
-    b = BuilderBot(*parse_args(sys.argv[1:]))
+    b = BotControllerGUI()
+    b.run()
 
 
 if __name__ == "__main__":

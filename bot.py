@@ -4,7 +4,6 @@ Contains code defining the bot and its behavior using Mineflayer and the llm mod
 
 from __future__ import annotations
 
-import os
 from collections import namedtuple
 
 from javascript import On, require
@@ -30,6 +29,7 @@ Command = namedtuple("Command", ["handler", "description", "args"])
 
 class BuilderBot:
     def __init__(self, host: str, port: int) -> None:
+        print(f"Attempting to join server '{host}' on port {port}")
         self.bot = mineflayer.createBot(
             {
                 "host": host,
@@ -38,7 +38,6 @@ class BuilderBot:
                 "hideErrors": False,
             }
         )
-        print(f"Attempting to join server '{host}' on port {port}")
         self.bot.loadPlugin(pathfinder.pathfinder)
         print("Started mineflayer")
         self.commands = {}
@@ -108,11 +107,10 @@ class BuilderBot:
         @On(self.bot, "end")
         def on_end(*args):
             """Called when the bot disconnects from the server"""
+            self.bot.chat("Bye! Disconnecting...")
             print("\nBot ended\n")
-            os._exit(0)  # TODO: Find something better than this
 
     def command_come(self, sender, args):
-        """walk over to the sender"""
         player = self.bot.players[sender]
         target = player.entity
         if not target:
