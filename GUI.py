@@ -1,57 +1,66 @@
-import os
-import tkinter as tk
+import flet as ft
 
 from bot import BuilderBot
+from utils import get_default_ipv4
 
 
-class BotControllerGUI:
-    def __init__(self):
+class BotController:
+    def __init__(self, page: ft.Page):
+        self.page = page
         self.bot = None
 
-        self.root = tk.Tk()
-        self.root.title("Minecraft Bot Controller")
+        self.setup_page()
 
-        # Server connection fields
-        tk.Label(self.root, text="Server Host:").pack()
-        self.host_entry = tk.Entry(self.root)
-        self.host_entry.pack()
+    def setup_page(self):
+        self.page.title = "Text-to-Minecraft Bot Controller"
+        self.page.theme_mode = ft.ThemeMode.LIGHT
+        self.page.theme = ft.Theme(color_scheme_seed=ft.Colors.GREEN_300)
+        self.page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
 
-        tk.Label(self.root, text="Server Port:").pack()
-        self.port_entry = tk.Entry(self.root)
-        self.port_entry.pack()
-
-        self.connect_button = tk.Button(
-            self.root, text="Connect", command=self.connect_to_server
+        self.port_field = ft.TextField(
+            label="LAN World Port", keyboard_type=ft.KeyboardType.NUMBER
         )
-        self.connect_button.pack()
+        self.page.add(self.port_field)
 
-        # Log display
-        tk.Label(self.root, text="Log:").pack()
-        self.log_display = tk.Text(
-            self.root, height=15, width=50, state="normal", wrap=tk.WORD
+        connect_button = ft.FilledButton(
+            text="Connect Bot to LAN World",
+            on_click=self.connect_bot,
         )
-        self.log_display.pack()
-        self.log_display.config(state="normal")
+        self.page.add(connect_button)
 
-    def log_message(self, message):
-        self.log_display.insert(tk.END, message)
-        self.log_display.see(tk.END)  # Auto-scroll to bottom
+        # Attach the disconnect logic to the on_close event
+        self.page.on_disconnect = self.disconnect_bot
 
-    def connect_to_server(self):
-        host = self.host_entry.get()
-        port = self.port_entry.get()
-        if not host or not port:
-            self.log_message("Error: Host and port are required!\n")
-            return
+        self.page.update()
+
+    def connect_bot(self, event):
         try:
-            self.bot = BuilderBot(host, int(port))
-            self.log_message(f"Attempting to connect to {host}:{port}...\n")
-            self.log_message("Connection successful!\n")
-        except Exception as e:
-            self.log_message(f"Connection failed: {e}\n")
+            port = int(self.port_field.value)
+            host = get_default_ipv4()
+            if not host:
+                self.show_snackbar("Wireless LAN adapter IPV4 not found")
+                return
+            self.bot = BuilderBot(host=host, port=port)
+            print("Bot connected successfully!")
+        except ValueError:
+            self.show_snackbar("Please enter a valid integer for the port.")
 
-    def run(self):
-        self.root.mainloop()
+    def disconnect_bot(self, event=None):
         if self.bot:
-            self.bot.command_exit(sender=None, args=None)
-        os._exit(0)
+            print("Disconnecting bot...")
+            self.bot.command_exit("", [])
+            self.bot = None
+            print("Bot disconnected successfully.")
+
+    def show_snackbar(self, message):
+        self.page.snack_bar = ft.SnackBar(content=ft.Text(message))
+        self.page.snack_bar.open = True
+        self.page.update()
+
+
+def main(page: ft.Page):
+    BotController(page)
+
+
+def run():
+    ft.app(main)

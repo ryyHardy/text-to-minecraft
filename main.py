@@ -2,12 +2,11 @@
 Entry point for the program, which takes in command line arguments to connect the bot to the server.
 """
 
-from GUI import BotControllerGUI
+from GUI import run
 
 
 def main():
-    b = BotControllerGUI()
-    b.run()
+    run()
 
 
 if __name__ == "__main__":

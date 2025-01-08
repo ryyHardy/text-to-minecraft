@@ -559,6 +559,27 @@ files = [
 Flask = ">=0.9"
 
 [[package]]
+name = "flet"
+version = "0.25.2"
+description = "Flet for Python - easily build interactive multi-platform apps in Python"
+optional = false
+python-versions = "<4.0,>=3.8"
+files = [
+    {file = "flet-0.25.2-py3-none-any.whl", hash = "sha256:3558545c079c8daf18f169f30e8e10ccb27146d2be2eb9dfe23e6fc7e09b9f1a"},
+]
+
+[package.dependencies]
+httpx = {version = "*", markers = "platform_system != \"Pyodide\""}
+oauthlib = {version = ">=3.2.2,<4.0.0", markers = "platform_system != \"Pyodide\""}
+repath = ">=0.9.0,<0.10.0"
+
+[package.extras]
+all = ["flet-cli (==0.25.2)", "flet-desktop (==0.25.2)", "flet-desktop-light (==0.25.2)", "flet-web (==0.25.2)"]
+cli = ["flet-cli (==0.25.2)"]
+desktop = ["flet-desktop (==0.25.2)", "flet-desktop-light (==0.25.2)"]
+web = ["flet-web (==0.25.2)"]
+
+[[package]]
 name = "frozenlist"
 version = "1.4.1"
 description = "A list-like structure which implements collections.abc.MutableSequence"
@@ -1448,6 +1469,22 @@ files = [
 ]
 
 [[package]]
+name = "oauthlib"
+version = "3.2.2"
+description = "A generic, spec-compliant, thorough implementation of the OAuth request-signing logic"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "oauthlib-3.2.2-py3-none-any.whl", hash = "sha256:8139f29aac13e25d502680e9e19963e83f16838d48a0d71c287fe40e7067fbca"},
+    {file = "oauthlib-3.2.2.tar.gz", hash = "sha256:9859c40929662bec5d64f34d01c99e093149682a3f38915dc0655d5a633dd918"},
+]
+
+[package.extras]
+rsa = ["cryptography (>=3.0.0)"]
+signals = ["blinker (>=1.4.0)"]
+signedtoken = ["cryptography (>=3.0.0)", "pyjwt (>=2.0.0,<3)"]
+
+[[package]]
 name = "openai"
 version = "1.51.0"
 description = "The official Python library for the openai API"
@@ -2038,6 +2075,20 @@ files = [
     {file = "regex-2024.9.11-cp39-cp39-win_amd64.whl", hash = "sha256:faa3c142464efec496967359ca99696c896c591c56c53506bac1ad465f66e919"},
     {file = "regex-2024.9.11.tar.gz", hash = "sha256:6c188c307e8433bcb63dc1915022deb553b4203a70722fc542c363bf120a01fd"},
 ]
+
+[[package]]
+name = "repath"
+version = "0.9.0"
+description = "Generate regular expressions form ExpressJS path patterns"
+optional = false
+python-versions = "*"
+files = [
+    {file = "repath-0.9.0-py3-none-any.whl", hash = "sha256:ee079d6c91faeb843274d22d8f786094ee01316ecfe293a1eb6546312bb6a318"},
+    {file = "repath-0.9.0.tar.gz", hash = "sha256:8292139bac6a0e43fd9d70605d4e8daeb25d46672e484ed31a24c7ce0aef0fb7"},
+]
+
+[package.dependencies]
+six = ">=1.9.0"
 
 [[package]]
 name = "requests"
@@ -2633,4 +2684,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "6fb70cec68c86165e928ee3a68d57235103628803bf9c4475b7265e0820ec61b"
+content-hash = "fc10067a6478d0e9cc0d45cce202560a84bed8a2f306236861381dbae0e84fd9"

@@ -13,6 +13,7 @@ mineflayer = "^0.0.14"
 openai = "^1.51.0"
 langchain = "^0.3.2"
 langchain-openai = "^0.2.2"
+flet = "^0.25.2"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^8.3.3"
