@@ -26,7 +26,7 @@ edit autoexec.bat
 -->
 ## Usage example
 
-### "build a snowman"
+### "$build a snowman"
 
 **Result:**\
 <img src="assets/he_built_a_snowman.png" width=60%>
