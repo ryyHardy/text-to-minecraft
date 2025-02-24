@@ -2,7 +2,7 @@
 Entry point for the program, which takes in command line arguments to connect the bot to the server.
 """
 
-from src.GUI import run
+from GUI import run
 
 
 def main():

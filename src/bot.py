@@ -4,12 +4,12 @@ Contains code defining the bot and its behavior using Mineflayer and the llm mod
 
 from __future__ import annotations
 
-import os
+# import os
 from collections import namedtuple
 
 from javascript import On, require
 
-from src.llm import MinecraftCodeGenerator
+from llm import MinecraftCodeGenerator
 
 mineflayer = require("mineflayer")
 pathfinder = require("mineflayer-pathfinder")

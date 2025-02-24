@@ -1,7 +1,7 @@
 import flet as ft
 
-from src.bot import BuilderBot
-from src.utils import get_default_ipv4
+from bot import BuilderBot
+from utils import get_default_ipv4
 
 
 class BotController:
