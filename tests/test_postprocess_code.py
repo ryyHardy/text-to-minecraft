@@ -1,4 +1,4 @@
-from llm import postprocess_code
+from src.llm import postprocess_code
 
 
 def test_postprocess_code():

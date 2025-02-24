@@ -1,4 +1,4 @@
-from llm import is_valid_python
+from src.llm import is_valid_python
 
 
 def test_is_valid_python():

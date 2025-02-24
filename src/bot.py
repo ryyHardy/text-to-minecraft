@@ -9,7 +9,7 @@ from collections import namedtuple
 
 from javascript import On, require
 
-from llm import MinecraftCodeGenerator
+from src.llm import MinecraftCodeGenerator
 
 mineflayer = require("mineflayer")
 pathfinder = require("mineflayer-pathfinder")
@@ -155,7 +155,7 @@ class BuilderBot:
     def command_help(self, sender, args):
         message = "Available commands:\n"
         for command, cmd in self.commands.items():
-            message += f"{command} {" ".join(cmd.args)} - {cmd.description}\n"
+            message += f"{command} {' '.join(cmd.args)} - {cmd.description}\n"
         self.bot.chat(message)
 
     def execute_code(self, code):

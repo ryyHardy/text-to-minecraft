@@ -1,4 +1,4 @@
-from llm import clean_code
+from src.llm import clean_code
 
 
 def test_clean_code():
