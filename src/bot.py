@@ -15,37 +15,53 @@ mineflayer = require("mineflayer")
 pathfinder = require("mineflayer-pathfinder")
 
 
-BOT_USERNAME = "TextMCBot"
-
-# TODO: Consider making bot chat messages private to just one player to avoid annoying other people on servers
-# As for how... I don't know yet. Maybe use the ingame /tellraw command?
-
-
-def place_block(bot: BuilderBot, block_type, x, y, z):
-    bot.chat(f"/setblock {x} {y} {z} {block_type}")
+def place_block(player, block_type, x, y, z):
+    player.chat(f"/setblock {x} {y} {z} {block_type}")
 
 
 Command = namedtuple("Command", ["handler", "description", "args"])
 
+MESSAGE_COLOR = "light_purple"
 
-class BuilderBot:
-    def __init__(self, host: str, port: int) -> None:
-        print(f"Attempting to join server '{host}' on port {port}")
-        self.player = mineflayer.createBot(
-            {
-                "host": host,
-                "port": port,
-                "username": BOT_USERNAME,
-                "hideErrors": False,
-            }
-        )
+
+class TextMCBot:
+    def __init__(self, username: str = "TextMCBot", allowed_users: list[str] = None):
+        self.username = username
+        self.player = None
+        self.allowed_users = allowed_users if allowed_users else []
+        self.commands = None
+
+    def connect(self, host: str, port: int) -> bool:
+        try:
+            self.player = mineflayer.createBot(
+                {
+                    "host": host,
+                    "port": port,
+                    "username": self.username,
+                    "hideErrors": False,
+                }
+            )
+        except Exception as _:
+            return False
         self.player.loadPlugin(pathfinder.pathfinder)
-        print("Started mineflayer")
-        self.commands = {}
-        self.bind_commands()
-        self.setup_listeners()
+        self.__bind_commands()
+        self.__setup_listeners()
+        return True
 
-    def bind_commands(self):
+    def __message(self, recipient: str, message: str):
+        """Send a message to a recipient in-game
+
+        :param recipient: The username of the recipient
+        :type recipient: str
+        :param message: The message to send
+        ttype message: str
+        """
+        # Use the in-game /tellraw command to make the message look nice
+        tellraw = f'/tellraw {recipient} {{"text":"[BOT] <{self.username}> {message}","color":"{MESSAGE_COLOR}"}}'
+        print(tellraw)
+        self.player.chat(tellraw)
+
+    def __bind_commands(self):
         """Binds possible bot commands to their handlers"""
         self.commands = {
             "$come": Command(
@@ -80,44 +96,62 @@ class BuilderBot:
             ),
         }
 
-    def setup_listeners(self):
+    def __setup_listeners(self):
         @On(self.player, "spawn")
-        def on_spawn(*args):
-            """Runs when the bot connects to a world"""
-            print("Connection successful!")
-            self.player.chat("Hello! Type '$help' for a list of commands!")
+        def on_spawn(this):
+            """Runs when the player spawns in the world"""
+            self.__message("@a", "Hello! Type $help for a list of commands")
             self.client = MinecraftCodeGenerator()
             self.movements = pathfinder.Movements(self.player)
 
         @On(self.player, "chat")
         def on_chat(this, sender, message: str, *args):
             """Runs after every in-game chat message"""
-            if not sender or sender == BOT_USERNAME:
+            if not sender or sender == self.username:
                 return
             if message.startswith("$"):  # Is a command?
                 command, *args = message.split(" ")
                 command = command.lower()
-                command = self.commands.get(command)
-                if command:
-                    command.handler(sender, args)
+                command_obj = self.commands.get(command)
+                if command_obj:
+                    command_obj.handler(sender, args)
                 else:
-                    self.player.chat(
-                        f"Unknown command: '{command}'. Try '$help' for a list of commands"
+                    self.__message(
+                        sender,
+                        f"Unknown command: '{command}'. Try '$help' for a list of commands",
                     )
 
         @On(self.player, "end")
         def on_end(*args):
-            """Called when the bot disconnects from the server"""
+            """Called when the bot ends and disconnects from the server"""
             off(self.player, "spawn", on_spawn)
             off(self.player, "chat", on_chat)
             off(self.player, "end", on_end)
-            print("\nBot ended\n")
+
+    def command_help(self, sender, args):
+        messages = ["Available commands:"]
+        for command, cmd in self.commands.items():
+            args_str = " ".join(cmd.args) if cmd.args else ""
+            description = cmd.description if cmd.description else "No description"
+
+            line = f"{command} {args_str} - {description}"
+            print(f"Generated help line: {line}")
+            messages.append(line)
+        for msg in messages:
+            self.__message(sender, msg)
+
+    def command_where(self, sender, args):
+        pos = self.player.entity.position
+        self.__message(
+            sender,
+            f"I'm at X: {int(pos.x)}, Y: {int(pos.y)}, Z: {int(pos.z)} in the {self.player.game.dimension}",
+        )
 
     def command_come(self, sender, args):
         player = self.player.players[sender]
         target = player.entity
         if not target:
-            self.player.chat("I don't see you!")
+            self.__message(sender, "I don't see you!")
             return
         pos = target.position
         self.player.pathfinder.setMovements(self.movements)
@@ -126,7 +160,15 @@ class BuilderBot:
                 pathfinder.goals.GoalNear(pos.x, pos.y, pos.z, 1)
             )
         except Exception:
-            self.player.chat("An error occurred with my pathfinding! Please try again.")
+            self.__message(
+                sender, "An error occurred with my pathfinding! Please try again."
+            )
+
+    def command_exec(self, sender, args):
+        cmd = " ".join(args)
+        if not cmd.startswith("/"):
+            cmd = "/" + cmd
+        self.player.chat(cmd)
 
     def command_build(self, sender, args):
         message = " ".join(args)  # Reconstructs the prompt
@@ -136,29 +178,11 @@ class BuilderBot:
             self.execute_code(response)
         except RuntimeError as e:
             print("Error in generated code: ", e)
-            self.player.chat("Error in generated code.")
-
-    def command_where(self, sender, args):
-        pos = self.player.entity.position
-        self.player.chat(
-            f"I'm at X: {int(pos.x)}, Y: {int(pos.y)}, Z: {int(pos.z)} in the {self.player.game.dimension}"
-        )
-
-    def command_exec(self, sender, args):
-        cmd = " ".join(args)
-        if not cmd.startswith("/"):
-            cmd = "/" + cmd
-        self.player.chat(cmd)
+            self.__message(sender, "Error in generated code.")
 
     def command_exit(self, sender, args):
-        self.player.chat("Bye! Disconnecting...")
+        self.__message("@a", "Bye! Disconnecting...")
         self.player.end()
-
-    def command_help(self, sender, args):
-        message = "Available commands:\n"
-        for command, cmd in self.commands.items():
-            message += f"{command} {' '.join(cmd.args)} - {cmd.description}\n"
-        self.player.chat(message)
 
     def execute_code(self, code):
         exec_context = {

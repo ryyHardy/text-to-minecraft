@@ -1,6 +1,8 @@
+import asyncio
+
 import flet as ft
 
-from bot import BuilderBot
+from bot import TextMCBot
 from utils import get_default_ipv4
 
 
@@ -40,15 +42,16 @@ class BotController:
             if not host:
                 self.show_snackbar("Wireless LAN adapter IPV4 not found")
                 return
-            self.bot = BuilderBot(host=host, port=port)
+            self.bot = TextMCBot()
+            self.bot.connect(host=host, port=port)
             print("Bot connected successfully!")
         except ValueError:
             self.show_snackbar("Please enter a valid integer for the port.")
 
-    def disconnect_bot(self, event=None):
+    async def disconnect_bot(self, event=None):
         if self.bot:
             print("Disconnecting bot...")
-            self.bot.command_exit("", [])
+            await asyncio.to_thread(self.bot.command_exit("@a", []))
             self.bot = None
             print("Bot disconnected successfully.")
 
