@@ -4,8 +4,8 @@
 
 TextToMinecraft is a bot that can perform all kinds of Minecraft-related tasks, and it can even build structures for you! All you need to do is chat with the bot in-game like you would with ChatGPT or other LLMs, and it will perform what you describe to the best of its ability.
 
-> ### WARNING:
-> 
+> ### WARNING
+>
 > This project is still very much a work-in-progress, so use with caution if you plan on testing it in a Minecraft world.
 <!--
 ![](header.png)
@@ -51,6 +51,24 @@ The bot works by connecting to a LAN world hosted on your machine. The process i
 4. You should see a port show up in the chat. Copy this port and paste it in the controller window's port field.
 5. Click the connect button and the bot should join your world and say hello!
 6. Once you're done interacting with it, use the "\$exit" command to disconnect the bot, then close the controller window.
+
+## Resources used
+
+- **[Mineflayer (Prismarine.js)](https://github.com/prismarinejs)** : Mineflayer is a Minecraft bot library that makes this project possible, and it is part of a larger Minecraft framework called Prismarine.js. It is written in JavaScript and it is possible to use in Python via the JS-Python Bridge.
+- **[LangChain/OpenAI](https://python.langchain.com/docs/introduction/)** : LangChain is used with the OpenAI API to generate the code that programatically builds structures in-game.
+- **[Flet](https://flet.dev/)** : The cross-platform, Flutter-based Python framework used for the bot controller GUI.
+
+## Future ideas and known issues
+
+- The program could use a better logging system for both the controller window and command line output
+- Potentially moving some bot functionality/utilities to other files because ``bot.py`` is getting long
+- The program does not properly handle entering an invalid host/port in the controller window
+- Generally, needs better and more consistent error handling
+- Better permission system for the bot so unwanted people can't command it
+- There is a punycode deprecation warning when running the program
+- The bot has little to no awareness of its surroundings which is dangerous on more populated worlds
+- Potentially making a version of the bot that is more friendly for survival mode
+
 <!--
 ## Release History
 

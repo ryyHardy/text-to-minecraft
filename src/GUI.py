@@ -1,10 +1,8 @@
 import asyncio
-import os
-import sys
 
 import flet as ft
 
-from bot_new import TextMCBot
+from bot import TextMCBot
 from utils import get_default_ipv4
 
 
