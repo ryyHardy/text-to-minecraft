@@ -7,7 +7,7 @@ from __future__ import annotations
 # import os
 from collections import namedtuple
 
-from javascript import On, require
+from javascript import AsyncTask, On, Once, off, once, require
 
 from llm import MinecraftCodeGenerator
 
@@ -31,7 +31,7 @@ Command = namedtuple("Command", ["handler", "description", "args"])
 class BuilderBot:
     def __init__(self, host: str, port: int) -> None:
         print(f"Attempting to join server '{host}' on port {port}")
-        self.bot = mineflayer.createBot(
+        self.player = mineflayer.createBot(
             {
                 "host": host,
                 "port": port,
@@ -39,7 +39,7 @@ class BuilderBot:
                 "hideErrors": False,
             }
         )
-        self.bot.loadPlugin(pathfinder.pathfinder)
+        self.player.loadPlugin(pathfinder.pathfinder)
         print("Started mineflayer")
         self.commands = {}
         self.bind_commands()
@@ -81,15 +81,15 @@ class BuilderBot:
         }
 
     def setup_listeners(self):
-        @On(self.bot, "spawn")
+        @On(self.player, "spawn")
         def on_spawn(*args):
             """Runs when the bot connects to a world"""
             print("Connection successful!")
-            self.bot.chat("Hello! Type '$help' for a list of commands!")
+            self.player.chat("Hello! Type '$help' for a list of commands!")
             self.client = MinecraftCodeGenerator()
-            self.movements = pathfinder.Movements(self.bot)
+            self.movements = pathfinder.Movements(self.player)
 
-        @On(self.bot, "chat")
+        @On(self.player, "chat")
         def on_chat(this, sender, message: str, *args):
             """Runs after every in-game chat message"""
             if not sender or sender == BOT_USERNAME:
@@ -101,30 +101,32 @@ class BuilderBot:
                 if command:
                     command.handler(sender, args)
                 else:
-                    self.bot.chat(
+                    self.player.chat(
                         f"Unknown command: '{command}'. Try '$help' for a list of commands"
                     )
 
-        @On(self.bot, "end")
+        @On(self.player, "end")
         def on_end(*args):
             """Called when the bot disconnects from the server"""
-            self.bot.chat("Bye! Disconnecting...")
+            off(self.player, "spawn", on_spawn)
+            off(self.player, "chat", on_chat)
+            off(self.player, "end", on_end)
             print("\nBot ended\n")
 
     def command_come(self, sender, args):
-        player = self.bot.players[sender]
+        player = self.player.players[sender]
         target = player.entity
         if not target:
-            self.bot.chat("I don't see you!")
+            self.player.chat("I don't see you!")
             return
         pos = target.position
-        self.bot.pathfinder.setMovements(self.movements)
+        self.player.pathfinder.setMovements(self.movements)
         try:
-            self.bot.pathfinder.setGoal(
+            self.player.pathfinder.setGoal(
                 pathfinder.goals.GoalNear(pos.x, pos.y, pos.z, 1)
             )
         except Exception:
-            self.bot.chat("An error occurred with my pathfinding! Please try again.")
+            self.player.chat("An error occurred with my pathfinding! Please try again.")
 
     def command_build(self, sender, args):
         message = " ".join(args)  # Reconstructs the prompt
@@ -134,34 +136,34 @@ class BuilderBot:
             self.execute_code(response)
         except RuntimeError as e:
             print("Error in generated code: ", e)
-            self.bot.chat("Error in generated code.")
+            self.player.chat("Error in generated code.")
 
     def command_where(self, sender, args):
-        pos = self.bot.entity.position
-        self.bot.chat(
-            f"I'm at X: {int(pos.x)}, Y: {int(pos.y)}, Z: {int(pos.z)} in the {self.bot.game.dimension}"
+        pos = self.player.entity.position
+        self.player.chat(
+            f"I'm at X: {int(pos.x)}, Y: {int(pos.y)}, Z: {int(pos.z)} in the {self.player.game.dimension}"
         )
 
     def command_exec(self, sender, args):
         cmd = " ".join(args)
         if not cmd.startswith("/"):
             cmd = "/" + cmd
-        self.bot.chat(cmd)
+        self.player.chat(cmd)
 
     def command_exit(self, sender, args):
-        self.bot.chat("Bye! Disconnecting...")
-        self.bot.end()
+        self.player.chat("Bye! Disconnecting...")
+        self.player.end()
 
     def command_help(self, sender, args):
         message = "Available commands:\n"
         for command, cmd in self.commands.items():
             message += f"{command} {' '.join(cmd.args)} - {cmd.description}\n"
-        self.bot.chat(message)
+        self.player.chat(message)
 
     def execute_code(self, code):
         exec_context = {
             "place_block": place_block,
-            "bot": self.bot,
+            "bot": self.player,
             "__builtins__": __builtins__,
         }
         try:
