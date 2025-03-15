@@ -19,6 +19,9 @@ pyinstaller = "^6.12.0"
 [tool.poetry.group.test.dependencies]
 pytest = "^8.3.3"
 
+[tool.flet.app]
+path = "src"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

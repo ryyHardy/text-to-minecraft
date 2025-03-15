@@ -41,11 +41,11 @@ class TextMCBot:
                     "hideErrors": False,
                 }
             )
-        except Exception as _:
+            self.player.loadPlugin(pathfinder.pathfinder)
+            self.__bind_commands()
+            self.__setup_listeners()
+        except Exception:
             return False
-        self.player.loadPlugin(pathfinder.pathfinder)
-        self.__bind_commands()
-        self.__setup_listeners()
         return True
 
     def __message(self, recipient: str, message: str):
