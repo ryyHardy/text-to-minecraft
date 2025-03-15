@@ -43,8 +43,11 @@ class BotController:
                 self.show_snackbar("Wireless LAN adapter IPV4 not found")
                 return
             self.bot = TextMCBot()
-            self.bot.connect(host=host, port=port)
-            print("Bot connected successfully!")
+            success = self.bot.connect(host=host, port=port)
+            if success:
+                print("Bot connected successfully!")
+            else:
+                print("\nConnection issue!")
         except ValueError:
             self.show_snackbar("Please enter a valid integer for the port.")
 
@@ -59,11 +62,3 @@ class BotController:
         self.page.snack_bar = ft.SnackBar(content=ft.Text(message))
         self.page.snack_bar.open = True
         self.page.update()
-
-
-def main(page: ft.Page):
-    BotController(page)
-
-
-def run():
-    ft.app(main)
