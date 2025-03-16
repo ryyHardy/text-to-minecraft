@@ -5,6 +5,8 @@ import flet as ft
 from bot import TextMCBot
 from utils import get_default_ipv4
 
+DEFAULT_WIN_SIZE = (500, 300)
+
 
 class BotController:
     def __init__(self, page: ft.Page):
@@ -62,3 +64,12 @@ class BotController:
         self.page.snack_bar = ft.SnackBar(content=ft.Text(message))
         self.page.snack_bar.open = True
         self.page.update()
+
+
+def main(page: ft.Page):
+    page.window.width, page.window.height = DEFAULT_WIN_SIZE
+    BotController(page)
+
+
+def run():
+    ft.app(main)

@@ -1,20 +1,20 @@
 [tool.poetry]
 name = "text-to-minecraft"
 version = "0.1.0"
-description = "An AI that constructs structures in Minecraft for you!"
+description = "An AI that builds structures in Minecraft for you!"
 authors = ["ryyHardy <ryyhardy@gmail.com>"]
 readme = "README.md"
+packages = [{ include = "src" }]
+scripts = { text-to-minecraft = "src.main:main" }
 
 [tool.poetry.dependencies]
 python = ">=3.12,<3.14"
 python-dotenv = "^1.0.1"
 javascript = "^1!1.2.1"
-mineflayer = "^0.0.14"
 openai = "^1.51.0"
 langchain = "^0.3.2"
 langchain-openai = "^0.2.2"
-flet = "^0.25.2"
-pyinstaller = "^6.12.0"
+flet = ">=0.25.2"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^8.3.3"

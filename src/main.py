@@ -2,14 +2,14 @@
 Entry point for the program, which takes in command line arguments to connect the bot to the server.
 """
 
-import flet as ft
+from GUI import run
+from node import check_node
 
-from GUI import BotController
 
-
-def main(page: ft.Page):
-    BotController(page)
+def main():
+    check_node()
+    run()
 
 
 if __name__ == "__main__":
-    ft.app(main)
+    main()
