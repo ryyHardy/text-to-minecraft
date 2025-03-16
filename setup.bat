@@ -4,7 +4,7 @@ echo Creating virtual environment...
 
 :: Create and activate virtual environment
 python -m venv .\.venv
-call venv\Scripts\activate
+call .\.venv\Scripts\activate
 
 echo Installing dependencies...
 
