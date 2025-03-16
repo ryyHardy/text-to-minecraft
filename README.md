@@ -52,7 +52,7 @@ The bot works by connecting to a LAN world hosted on your machine. The process i
 
 ## Resources used
 
-- **[Mineflayer (Prismarine.js)](https://github.com/prismarinejs)** : Mineflayer is a Minecraft bot library that makes this project possible, and it is part of a larger Minecraft framework called Prismarine.js. It is written in JavaScript and it is possible to use in Python via the JS-Python Bridge.
+- **[Mineflayer (Prismarine.js)](https://github.com/prismarinejs)** : Mineflayer is a Minecraft bot library that makes this project possible, and it is part of a larger Minecraft framework called Prismarine.js. It is written in JavaScript and it is possible to use in Python via the javascript module.
 - **[LangChain/OpenAI](https://python.langchain.com/docs/introduction/)** : LangChain is used with the OpenAI API to generate the code that programatically builds structures in-game.
 - **[Flet](https://flet.dev/)** : The cross-platform, Flutter-based Python framework used for the bot controller GUI.
 
