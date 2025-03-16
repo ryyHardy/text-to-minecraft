@@ -5,6 +5,8 @@ import flet as ft
 from bot import TextMCBot
 from utils import get_default_ipv4
 
+DEFAULT_WIN_SIZE = (500, 300)
+
 
 class BotController:
     def __init__(self, page: ft.Page):
@@ -62,6 +64,7 @@ class BotController:
 
 
 def main(page: ft.Page):
+    page.window.width, page.window.height = DEFAULT_WIN_SIZE
     BotController(page)
 
 

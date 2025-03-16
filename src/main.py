@@ -3,9 +3,11 @@ Entry point for the program, which takes in command line arguments to connect th
 """
 
 from GUI import run
+from node import check_node
 
 
 def main():
+    check_node()
     run()
 
 
