@@ -113,6 +113,11 @@ class TextMCBot:
                 description="Walk over to the sender.",
                 args=[],
             ),
+            "$tp": Command(
+                handler=self.command_tp,
+                description="Teleport to the sender.",
+                args=[],
+            ),
             "$build": Command(
                 handler=self.command_build,
                 description="Build a structure based on the sender's prompt.",
@@ -204,6 +209,9 @@ class TextMCBot:
             self.__message(
                 sender, "An error occurred with my pathfinding! Please try again."
             )
+
+    def command_tp(self, sender, args):
+        self.player.chat(f"/tp {self.username} {sender}")
 
     def command_exec(self, sender, args):
         cmd = " ".join(args)
