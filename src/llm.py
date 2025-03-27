@@ -6,12 +6,12 @@ import ast
 import os
 import re
 
-from dotenv import load_dotenv
+from dotenv import find_dotenv, load_dotenv
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate, FewShotChatMessagePromptTemplate
 from langchain_openai import ChatOpenAI
 
-load_dotenv("OPENAI_API_KEY")
+load_dotenv(find_dotenv(raise_error_if_not_found=True, filename=".env"))
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 

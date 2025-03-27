@@ -37,25 +37,29 @@ class BotController:
 
         self.page.update()
 
-    def connect_bot(self, event):
+    async def connect_bot(self, event):
         try:
             port = int(self.port_field.value)
             host = get_default_ipv4()
             if not host:
-                self.show_snackbar("Wireless LAN adapter IPV4 not found")
+                await self.page.show_snack_bar(
+                    ft.SnackBar(content=ft.Text("Wireless LAN adapter IPV4 not found"))
+                )
+                # self.show_snackbar("Wireless LAN adapter IPV4 not found")
                 return
             self.bot = TextMCBot()
-            success = self.bot.connect(host=host, port=port)
+            success = await self.bot.connect(host=host, port=port)
             if success:
                 print("Bot connected successfully!")
+                self.show_snackbar("Bot connected successfully!")
             else:
                 print("\nConnection issue!")
+                self.show_snackbar("Bot failed to connect.")
         except ValueError:
             self.show_snackbar("Please enter a valid integer for the port.")
 
     async def disconnect_bot(self, event=None):
-        if self.bot:
-            print("Disconnecting bot...")
+        if self.bot and self.bot.connected:
             await asyncio.to_thread(self.bot.command_exit("@a", []))
             self.bot = None
             print("Bot disconnected successfully.")

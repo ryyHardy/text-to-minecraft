@@ -1,5 +1,5 @@
 """
-Entry point for the program, which takes in command line arguments to connect the bot to the server.
+Entry point for the program, starting the GUI and checking node dependency
 """
 
 from GUI import run

@@ -4,7 +4,7 @@ Contains code defining the bot and its behavior using Mineflayer and the llm mod
 
 from __future__ import annotations
 
-# import os
+import asyncio
 from collections import namedtuple
 
 from javascript import AsyncTask, On, Once, off, once, require
@@ -30,25 +30,68 @@ class TextMCBot:
         self.player = None
         self.allowed_users = allowed_users if allowed_users else []
         self.commands = None
+        self.spawn_event = asyncio.Event()
+        self.client = None
+        self.movements = None
 
-    def connect(self, host: str, port: int) -> bool:
+        self.connected = False
+
+    async def connect(self, host: str, port: int) -> bool:
+        connect_future = asyncio.Future()
         try:
             self.player = mineflayer.createBot(
                 {
                     "host": host,
                     "port": port,
                     "username": self.username,
-                    "hideErrors": False,
+                    "hideErrors": True,  # Setting to false is good for debugging
                 }
             )
-            self.player.loadPlugin(pathfinder.pathfinder)
-            self.__bind_commands()
-            self.__setup_listeners()
-        except Exception:
-            return False
-        return True
 
-    def __message(self, recipient: str, message: str):
+            # Define handlers inline for clarity
+            def handle_spawn(_):
+                """Initial spawn handler just for connection verification"""
+                if not connect_future.done():
+                    connect_future.set_result(True)
+
+            def handle_error(_, err):
+                """Error handler for connection failures"""
+                if not connect_future.done():
+                    print(f"Connection error: {err}")
+                    connect_future.set_result(False)
+
+            # Register temporary handlers for connection
+            self.player.once("spawn", handle_spawn)
+            self.player.once("error", handle_error)
+
+            # Wait for initial connection
+            try:
+                success = await asyncio.wait_for(connect_future, timeout=5.0)
+                if not success:
+                    return False
+
+                # If connection successful, initialize bot
+                self.player.loadPlugin(pathfinder.pathfinder)
+                self.client = MinecraftCodeGenerator()
+                self.movements = pathfinder.Movements(self.player)
+                self.__bind_commands()
+                self.__setup_listeners()
+                self.__message(
+                    "@a", "Hello! Chat $help for a list of commands", log=False
+                )
+
+                self.connected = True
+                return True
+
+            except asyncio.TimeoutError:
+                print("Connection timed out")
+                return False
+
+        except Exception as e:
+            print(f"Unexpected error during connection: {e}")
+            return False
+
+    def __message(self, recipient: str, message: str, log: bool = True):
         """Send a message to a recipient in-game
 
         :param recipient: The username of the recipient
@@ -58,7 +101,8 @@ class TextMCBot:
         """
         # Use the in-game /tellraw command to make the message look nice
         tellraw = f'/tellraw {recipient} {{"text":"[BOT] <{self.username}> {message}","color":"{MESSAGE_COLOR}"}}'
-        print(tellraw)
+        if log:
+            print(f"[BOT] <{self.username}> {message}")
         self.player.chat(tellraw)
 
     def __bind_commands(self):
@@ -97,13 +141,6 @@ class TextMCBot:
         }
 
     def __setup_listeners(self):
-        @On(self.player, "spawn")
-        def on_spawn(this):
-            """Runs when the player spawns in the world"""
-            self.__message("@a", "Hello! Type $help for a list of commands")
-            self.client = MinecraftCodeGenerator()
-            self.movements = pathfinder.Movements(self.player)
-
         @On(self.player, "chat")
         def on_chat(this, sender, message: str, *args):
             """Runs after every in-game chat message"""
@@ -114,7 +151,13 @@ class TextMCBot:
                 command = command.lower()
                 command_obj = self.commands.get(command)
                 if command_obj:
-                    command_obj.handler(sender, args)
+                    try:
+                        command_obj.handler(sender, args)
+                    except Exception as e:
+                        print(f"Error executing command: {e}")
+                        self.__message(
+                            sender, "An error occurred while executing the command"
+                        )
                 else:
                     self.__message(
                         sender,
@@ -124,7 +167,6 @@ class TextMCBot:
         @On(self.player, "end")
         def on_end(*args):
             """Called when the bot ends and disconnects from the server"""
-            off(self.player, "spawn", on_spawn)
             off(self.player, "chat", on_chat)
             off(self.player, "end", on_end)
 
@@ -135,7 +177,6 @@ class TextMCBot:
             description = cmd.description if cmd.description else "No description"
 
             line = f"{command} {args_str} - {description}"
-            print(f"Generated help line: {line}")
             messages.append(line)
         for msg in messages:
             self.__message(sender, msg)
@@ -181,7 +222,9 @@ class TextMCBot:
             self.__message(sender, "Error in generated code.")
 
     def command_exit(self, sender, args):
+        self.connected = False
         self.__message("@a", "Bye! Disconnecting...")
+        print("Bot disconnected")
         self.player.end()
 
     def execute_code(self, code):
