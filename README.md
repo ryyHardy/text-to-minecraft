@@ -33,7 +33,7 @@ edit autoexec.bat
 
 ## Setup
 
-0. The dependencies for this program are NodeJS, Python, and you need to have Minecraft, of course (version 1.20.4).
+0. The dependencies for this program are NodeJS, Python, and you need to have Minecraft, of course (version 1.20.4, Java Edition).
 1. Clone the repository on your machine.
 2. Run **setup.bat** either in the command line or by clicking on it. This will create a virtual environment and install all the dependencies for you.
 3. Substitute an OpenAI API key in ``.env.sample`` and rename that file to ``.env``. The bot uses this API to generate structures so it is necessary.
@@ -49,6 +49,17 @@ The bot works by connecting to a LAN world hosted on your machine. The process i
 4. You should see the port for the LAN world show up in the chat. Copy this port and paste it in the controller window's port field.
 5. Click the connect button and the bot should join your world and say hello!
 6. Once you're done interacting with it, use the "\$exit" command to disconnect the bot, then close the controller window.
+
+## Interacting with the bot
+
+Players can issue commands to the bot through Minecraft's chat window by pressing T (by default). ALl commands start with a dollar sign (\$). To see a list of commands, type **"\$help"** (without the quotes) into the chat window and hit ENTER. The bot should list all the available commanads, and you can try them out. Here are the most relevant ones:
+
+- **"\$help"** will show a list of available commands, their arguments, and descriptions.
+- **"\$build \<message>"** will show a list of available commands, their arguments, and descriptions.
+- **"\$come"** will have the bot pathfind to your location. It could take a while over longer distances. It is very entertaining to watch, though.
+- **"\$tp"** will teleport the bot to your location if you prefer a faster form of transportation.
+- **"\$where"** will have the bot tell you where it is in the world, and in what dimension.
+- **"\$exit"** will have the bot disconnect from the server. The controller window will stay open in case you want to reconnect it.
 
 ## Resources used
 
