@@ -97,7 +97,7 @@ class TextMCBot:
         :param recipient: The username of the recipient
         :type recipient: str
         :param message: The message to send
-        ttype message: str
+        :type message: str
         """
         # Use the in-game /tellraw command to make the message look nice
         tellraw = f'/tellraw {recipient} {{"text":"[BOT] <{self.username}> {message}","color":"{MESSAGE_COLOR}"}}'
@@ -169,9 +169,14 @@ class TextMCBot:
                         f"Unknown command: '{command}'. Try '$help' for a list of commands",
                     )
 
+        @On(self.player, "kicked")
+        def on_kicked(this, reason, loggedIn):
+            print(f"\nBot kicked from server: {reason}")
+
         @On(self.player, "end")
         def on_end(*args):
             """Called when the bot ends and disconnects from the server"""
+            print("\nBot disconnected")
             off(self.player, "chat", on_chat)
             off(self.player, "end", on_end)
 
@@ -232,7 +237,6 @@ class TextMCBot:
     def command_exit(self, sender, args):
         self.connected = False
         self.__message("@a", "Bye! Disconnecting...")
-        print("Bot disconnected")
         self.player.end()
 
     def execute_code(self, code):
