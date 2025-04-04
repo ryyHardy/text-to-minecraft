@@ -52,7 +52,7 @@ The bot works by connecting to a LAN world hosted on your machine. The process i
 
 ## Interacting with the bot
 
-Players can issue commands to the bot through Minecraft's chat window by pressing T (by default). ALl commands start with a dollar sign (\$). To see a list of commands, type **"\$help"** (without the quotes) into the chat window and hit ENTER. The bot should list all the available commanads, and you can try them out. Here are the most relevant ones:
+Players can issue commands to the bot through Minecraft's chat window by pressing T (by default). All commands start with a dollar sign (\$). To see a list of commands, type **"\$help"** (without the quotes) into the chat window and hit ENTER. The bot should list all the available commanads, and you can try them out. Here are the most relevant ones:
 
 - **"\$help"** will show a list of available commands, their arguments, and descriptions.
 - **"\$build \<message>"** is the bot's primary feature. It takes in a prompt and builds a structure for it at the bot's location.
