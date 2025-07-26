@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
 
-test("Free pass for dopamine", () => {
+test("free pass for dopamine", () => {
   expect(true).toBe(true);
 });
