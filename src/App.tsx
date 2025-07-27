@@ -1,11 +1,9 @@
 import "./App.css";
 
+import ConnectForm from "./ConnectForm";
+
 function App() {
-  return (
-    <>
-      <h1>Hi!</h1>
-    </>
-  );
+  return <ConnectForm />;
 }
 
 export default App;
