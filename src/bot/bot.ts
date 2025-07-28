@@ -12,7 +12,7 @@ const MESSAGE_COLOR = "light_purple";
  * @param username The username to give to the bot's player
  * @returns Promise of the connected mineflayer bot
  */
-function createPlayer(
+export function createPlayer(
   host: string,
   port: number,
   username: string
@@ -166,10 +166,8 @@ export class TextMCBot {
     const tellraw = `/tellraw ${recipient} {{"text":"[BOT] <${this.username}> ${msg}","color":"${MESSAGE_COLOR}"}}`;
     this.player.chat(tellraw);
   }
-}
 
-(async () => {
-  const bot = new TextMCBot(
-    await createPlayer("localhost", 55555, "TextMCBot")
-  );
-})();
+  disconnect() {
+    this.player.end("disconnect() function");
+  }
+}

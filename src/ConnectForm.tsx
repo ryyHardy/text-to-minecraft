@@ -1,16 +1,42 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import "./ConnectForm.css";
 
+import { createPlayer, TextMCBot } from "./bot/bot.ts";
+
 export default function ConnectForm() {
+  const botRef = useRef<TextMCBot | null>(null);
+
   const [waiting, setWaiting] = useState(false);
   const [connected, setConnected] = useState(false);
-
   const [host, setHost] = useState<string>();
   const [port, setPort] = useState<number>();
 
-  function handleSubmit(event: React.FormEvent) {
+  async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-    setConnected(prev => !prev);
+
+    if (connected && botRef.current) {
+      botRef.current.disconnect();
+      botRef.current = null;
+      setConnected(false);
+      return;
+    }
+    if (!host || !port) return;
+
+    setWaiting(true);
+    try {
+      const player = await createPlayer(host, port, "TextMCBot");
+
+      player.once("end", () => {
+        botRef.current = null;
+        setConnected(false);
+      });
+
+      const bot = new TextMCBot(player);
+      botRef.current = bot;
+    } catch {
+      botRef.current = null;
+      setWaiting(false);
+    }
   }
 
   return (
