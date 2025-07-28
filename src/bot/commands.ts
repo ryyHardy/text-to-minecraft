@@ -1,40 +1,42 @@
 import yargs from "yargs";
+import stringArgv from "string-argv";
 
-/**
-Token used to distinguish a command from a normal chat message (like the "/" for Minecraft commands)
-*/
-export const COMMAND_DELIMITER = "$";
+export function getCommands() {
+  return yargs()
+    .command(
+      "help",
+      "Show help menu for commands",
+      () => {} // no args
+    )
 
-/**
- * Declares bot commands, their arguments and descriptions
- */
-const commands = yargs()
-  .command(
-    "help",
-    "Show help menu for commands",
-    () => {} // no args
-  )
+    .command(
+      "exit",
+      "Disconnect from the world",
+      () => {} // no args
+    )
 
-  .command(
-    "exit",
-    "Disconnect from the world",
-    () => {} // no args
-  )
+    .command(
+      "where",
+      "Get current location",
+      () => {} // no args
+    )
 
-  .command(
-    "where",
-    "Get current location",
-    () => {} // no args
-  )
+    .command("come", "Walk to the sender", () => {})
 
-  .command("come", "Walk to the sender", () => {})
+    .command("build <prompt>", "Build something based on a prompt", yargs => {
+      return yargs.positional("prompt", {
+        type: "string",
+        describe: "Prompt describing the structure",
+      });
+    })
 
-  .command("build <prompt>", "Build something based on a prompt", yargs => {
-    return yargs.positional("prompt", {
-      type: "string",
-      describe: "Prompt describing the structure",
-    });
-  });
+    .exitProcess(false)
+    .strictCommands()
+    .fail(msg => {
+      throw new Error(msg);
+    })
+    .scriptName("<bot-username>:");
+}
 
 /**
  * Parses an input string as a command
@@ -42,18 +44,12 @@ const commands = yargs()
  * @returns The parsed arguments to the command
  */
 export function parseCommand(input: string) {
-  return commands
-    .exitProcess(false)
-    .fail((_, err) => {
-      throw err;
-    })
-    .parse(input.slice(COMMAND_DELIMITER.length).split(/\s+/));
+  /**
+   * Declares bot commands, their arguments and descriptions
+   */
+  return getCommands().parseSync(stringArgv(input));
 }
 
-/**
- * Gets the help menu for the configured bot commands
- * @returns Help message as a string
- */
-export async function getHelpMsg(): Promise<string> {
-  return commands.getHelp();
+export async function getHelp(): Promise<string> {
+  return getCommands().getHelp();
 }

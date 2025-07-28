@@ -1,7 +1,7 @@
 import * as mineflayer from "mineflayer";
 import * as pathfinder from "mineflayer-pathfinder";
 
-import { COMMAND_DELIMITER, getHelpMsg, parseCommand } from "./commands";
+import { parseCommand, getHelp } from "./commands";
 
 const MESSAGE_COLOR = "light_purple";
 
@@ -63,7 +63,10 @@ export class TextMCBot {
     this.player.loadPlugin(pathfinder.pathfinder);
     this.movements = new pathfinder.Movements(this.player);
 
-    this.message("@a", `Hello! Type $help for a list of commands.`);
+    this.message(
+      "@a",
+      `Hello! Send '${this.username}: help' in the chat for a list of commands.`
+    );
 
     this.setupListeners();
   }
@@ -78,22 +81,34 @@ export class TextMCBot {
   private setupListeners() {
     // Fires when a chat message happens in the world
     this.player.on("chat", async (sender, msg) => {
-      if (sender === this.username || !msg.startsWith(COMMAND_DELIMITER))
+      if (sender === this.username || !msg.startsWith(`${this.username}:`))
         return;
 
       if (
         this.exclusiveUsers.length > 0 &&
         !this.exclusiveUsers.includes(sender)
       ) {
-        this.message(sender, "You are not in my list of exclusive users");
+        this.message(sender, "You are not in my list of exclusive users.");
+        return;
       }
 
-      const parsed = await parseCommand(msg);
+      // 'username: command arg1 arg2' -> 'command arg1 arg2'
+      const cmd = msg.slice(this.username.length + 1);
+      let parsed;
+      try {
+        parsed = parseCommand(cmd);
+      } catch {
+        this.message(
+          sender,
+          `Error reading command '${cmd}'. Try '${this.username}: help' for a list of commands.`
+        );
+        return;
+      }
 
       // Switch by the command name (argument 0)
       switch (parsed._[0].toString()) {
         case "help": {
-          const helpMsg = await getHelpMsg();
+          const helpMsg = await getHelp();
           for (const line of helpMsg.split("\n")) {
             this.message(sender, line);
           }
@@ -109,7 +124,7 @@ export class TextMCBot {
             sender,
             `I'm at X: ${Math.floor(pos.x)}, Y: ${Math.floor(
               pos.y
-            )}, Z: ${Math.floor(pos.z)} in the ${this.player.game.dimension}`
+            )}, Z: ${Math.floor(pos.z)} in the ${this.player.game.dimension}.`
           );
           break;
         }
