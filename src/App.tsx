@@ -1,9 +1,5 @@
-import "./App.css";
+import Profile from "./components/Profile";
 
-import ConnectForm from "./ConnectForm";
-
-function App() {
-  return <ConnectForm />;
+export default function App() {
+  return <Profile />;
 }
-
-export default App;
