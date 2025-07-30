@@ -10,18 +10,21 @@ const MESSAGE_COLOR = "light_purple";
  * @param host The host of the server to connect to
  * @param port The port on that server
  * @param username The username to give to the bot's player
+ * @param onDisconnect Optional callback for when the bot disconnects from the world
  * @returns Promise of the connected mineflayer bot
  */
 export function createPlayer(
   host: string,
   port: number,
-  username: string
+  username: string,
+  onDisconnect?: (reason: string) => void
 ): Promise<Bot> {
   return new Promise((resolve, reject) => {
     const player = createBot({
       host: host,
       port: port,
       username: username,
+      version: "1.20.4",
       hideErrors: false,
     });
 
@@ -35,6 +38,11 @@ export function createPlayer(
           `Bot failed to connect to host '${host}' on port ${port}:\n${err}`
         )
       );
+    });
+
+    player.once("end", reason => {
+      player.removeAllListeners();
+      onDisconnect(reason);
     });
   });
 }
@@ -147,12 +155,9 @@ export class TextMCBot {
       }
     });
 
-    // Fires when the bot disconnects from the world
-    this.player.on("end", reason => {
-      this.player.removeAllListeners();
-      console.info(
-        `TextMCBot '${this.username}' disconnected (reason: ${reason})`
-      );
+    // TODO: Consider removing later
+    this.player.on("error", err => {
+      console.error(`Bot Error: ${err}`);
     });
   }
 

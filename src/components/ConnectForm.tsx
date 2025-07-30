@@ -1,71 +1,94 @@
-import { useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import "./ConnectForm.css";
 
 export default function ConnectForm() {
-  const botRef = useRef(null);
+  const [status, setStatus] = useState<
+    "disconnected" | "connecting" | "connected"
+  >("disconnected");
+  const [error, setError] = useState<string | null>(null);
+  const [host, setHost] = useState<string>("");
+  const [port, setPort] = useState<number>(25565);
+  const [username, setUsername] = useState<string>("TextMCBot");
 
-  const [waiting, setWaiting] = useState(false);
-  const [connected, setConnected] = useState(false);
-  const [host, setHost] = useState<string>();
-  const [port, setPort] = useState<number>();
+  useEffect(() => {
+    // Listen for disconnection events
+    const cleanup = window.textmc.onBotDisconnected(({ reason }) => {
+      setStatus("disconnected");
+      setError(`Bot disconnected: ${reason}`);
+    });
+
+    return cleanup;
+  }, []);
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
+    setError(null);
 
-    if (connected && botRef.current) {
-      botRef.current.disconnect();
-      botRef.current = null;
-      setConnected(false);
+    if (status === "connected") {
+      try {
+        await window.textmc.disconnectBot(username);
+        setStatus("disconnected");
+      } catch (err) {
+        setError(err.message);
+      }
       return;
     }
+
     if (!host || !port) return;
 
-    setWaiting(true);
+    setStatus("connecting");
     try {
-      const player = await window.textmc.createPlayer(host, port, "TextMCBot");
-
-      player.once("end", () => {
-        botRef.current = null;
-        setConnected(false);
-      });
-
-      const bot = window.textmc.createBot(player);
-      botRef.current = bot;
-    } catch {
-      botRef.current = null;
-      setWaiting(false);
+      const result = await window.textmc.connectBot(host, port, username);
+      if (result.success) {
+        setStatus("connected");
+      } else {
+        setError(result.error);
+        setStatus("disconnected");
+      }
+    } catch (err) {
+      setError(err.message);
+      setStatus("disconnected");
     }
   }
 
   return (
     <form onSubmit={handleSubmit}>
       <h2>Connect Bot</h2>
-      <label htmlFor='host-input'>host: </label>
+
+      {error && <div className='error'>{error}</div>}
+
+      <label htmlFor='host-input'>Host: </label>
       <input
-        placeholder='host'
-        type='password'
-        name='host-input'
+        required
+        placeholder='localhost'
+        type='text'
         id='host-input'
         value={host}
-        onChange={event => setHost(event.target.value)}
+        disabled={status === "connecting"}
+        onChange={e => setHost(e.target.value)}
       />
 
-      <label htmlFor='port-input'>port: </label>
+      <label htmlFor='port-input'>Port: </label>
       <input
-        placeholder='port'
+        required
+        placeholder='25565'
         type='number'
-        name='port-input'
         id='port-input'
         value={port}
-        onChange={event => setPort(parseInt(event.target.value))}
+        disabled={status === "connecting"}
+        onChange={e => setPort(parseInt(e.target.value))}
       />
 
       <button
         type='submit'
-        className={`${connected ? "disconnect" : "connect"}-btn`}
-        disabled={waiting}
+        className={`${status === "connected" ? "disconnect" : "connect"}-btn`}
+        disabled={status === "connecting"}
       >
-        {waiting ? "waiting..." : connected ? "disconnect" : "connect"}
+        {status === "connecting"
+          ? "Connecting..."
+          : status === "connected"
+          ? "Disconnect"
+          : "Connect"}
       </button>
     </form>
   );

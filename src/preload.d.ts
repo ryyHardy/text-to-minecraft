@@ -1,10 +1,20 @@
-import { type Bot } from "mineflayer";
-import { type TextMCBot } from "./bot/bot";
-
 export interface TextMCAPI {
-  testPreload: () => void;
-  createPlayer: (host: string, port: number, username: string) => Promise<Bot>;
-  createBot: (player: Bot, exclusiveUsers: string[] = []) => TextMCBot;
+  connectBot: (
+    host: string,
+    port: number,
+    username: string,
+    exclusiveUsers?: string[]
+  ) => Promise<{ success: boolean; username?: string; error?: string }>;
+
+  disconnectBot: (
+    username: string
+  ) => Promise<{ success: boolean; error?: string }>;
+
+  getBotStatus: (username: string) => Promise<{ connected: boolean }>;
+
+  onBotDisconnected: (
+    callback: (data: { username: string; reason: string }) => void
+  ) => void;
 }
 
 declare global {
