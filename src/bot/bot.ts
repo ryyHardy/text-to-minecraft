@@ -1,5 +1,5 @@
-import * as mineflayer from "mineflayer";
-import * as pathfinder from "mineflayer-pathfinder";
+import { createBot, Bot } from "mineflayer";
+import { pathfinder, Movements, goals } from "mineflayer-pathfinder";
 
 import { parseCommand, getHelp } from "./commands";
 
@@ -16,9 +16,9 @@ export function createPlayer(
   host: string,
   port: number,
   username: string
-): Promise<mineflayer.Bot> {
+): Promise<Bot> {
   return new Promise((resolve, reject) => {
-    const player = mineflayer.createBot({
+    const player = createBot({
       host: host,
       port: port,
       username: username,
@@ -45,9 +45,9 @@ export function createPlayer(
 // }
 
 export class TextMCBot {
-  private player: mineflayer.Bot;
+  private player: Bot;
   private exclusiveUsers: string[];
-  private movements: pathfinder.Movements;
+  private movements: Movements;
 
   /**
    * Take a mineflayer player and convert it to a TextMCBot, which encapsulates new features on top of mineflayer's capabilities
@@ -55,13 +55,13 @@ export class TextMCBot {
    * @param player The mineflayer bot to convert to a TextMCBot
    * @param exclusiveUsers A list of usernames of players exclusively allowed to command the bot. If empty (default), anyone can command it
    */
-  constructor(player: mineflayer.Bot, exclusiveUsers: string[] = []) {
+  constructor(player: Bot, exclusiveUsers: string[] = []) {
     // I love dependency injection so much
     this.player = player;
     this.exclusiveUsers = exclusiveUsers;
 
-    this.player.loadPlugin(pathfinder.pathfinder);
-    this.movements = new pathfinder.Movements(this.player);
+    this.player.loadPlugin(pathfinder);
+    this.movements = new Movements(this.player);
 
     this.message(
       "@a",
@@ -135,7 +135,7 @@ export class TextMCBot {
             this.player.pathfinder.setMovements(this.movements);
             // TODO: Consider a try-catch here just in case
             this.player.pathfinder.setGoal(
-              new pathfinder.goals.GoalNear(pos.x, pos.y, pos.z, 1)
+              new goals.GoalNear(pos.x, pos.y, pos.z, 1)
             );
           }
           break;

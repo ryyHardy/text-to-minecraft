@@ -1,5 +1,8 @@
-import Profile from "./components/Profile";
+import "./App.css";
+
+import ConnectForm from "./components/ConnectForm";
 
 export default function App() {
-  return <Profile />;
+  window.textmc.testPreload();
+  return <ConnectForm />;
 }
