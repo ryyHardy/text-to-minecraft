@@ -4,6 +4,7 @@ import { defineConfig } from "vite";
 export default defineConfig({
   build: {
     outDir: ".vite/build/preload",
+    sourcemap: true,
     rollupOptions: {
       external: ["mineflayer", "mineflayer-pathfinder", "electron"],
       output: {
