@@ -26,6 +26,7 @@ export function createPlayer(
     });
 
     player.once("spawn", () => {
+      player.removeAllListeners();
       resolve(player);
     });
 
@@ -146,14 +147,6 @@ export class TextMCBot {
         }
       }
     });
-
-    // Fires when the bot disconnects from the world
-    this.player.on("end", reason => {
-      this.player.removeAllListeners();
-      console.info(
-        `TextMCBot '${this.username}' disconnected (reason: ${reason})`
-      );
-    });
   }
 
   /**
@@ -163,7 +156,7 @@ export class TextMCBot {
    * @param msg The message to send
    */
   message(recipient: string, msg: string) {
-    const tellraw = `/tellraw ${recipient} {{"text":"[BOT] <${this.username}> ${msg}","color":"${MESSAGE_COLOR}"}}`;
+    const tellraw = `/tellraw ${recipient} {"text":"[BOT] <${this.username}> ${msg}","color":"${MESSAGE_COLOR}"}`;
     this.player.chat(tellraw);
   }
 
