@@ -12,7 +12,7 @@ export default function ConnectForm() {
 
   useEffect(() => {
     // Listen for disconnection events
-    const cleanup = window.textmc.onBotDisconnected(({ reason }) => {
+    const cleanup = window.textmc.onBotDisconnected((_, reason) => {
       setStatus("disconnected");
       setError(`Bot disconnected: ${reason}`);
     });
@@ -60,7 +60,7 @@ export default function ConnectForm() {
       <label htmlFor='host-input'>Host: </label>
       <input
         required
-        placeholder='localhost'
+        placeholder='hostname'
         type='text'
         id='host-input'
         value={host}

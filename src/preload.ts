@@ -3,32 +3,39 @@
 
 import { contextBridge, ipcRenderer } from "electron";
 
+function connectBot(
+  host: string,
+  port: number,
+  username: string,
+  exclusiveUsers: string[] = []
+) {
+  return ipcRenderer.invoke("connect-bot", {
+    host,
+    port,
+    username,
+    exclusiveUsers,
+  });
+}
+
+function disconnectBot(username: string) {
+  return ipcRenderer.invoke("disconnect-bot", username);
+}
+
+function getBotStatus(username: string) {
+  return ipcRenderer.invoke("get-bot-status", username);
+}
+
 contextBridge.exposeInMainWorld("textmc", {
-  connectBot: async (
-    host: string,
-    port: number,
-    username: string,
-    exclusiveUsers: string[] = []
-  ) => {
-    return ipcRenderer.invoke("connect-bot", {
-      host,
-      port,
-      username,
-      exclusiveUsers,
-    });
-  },
+  connectBot: connectBot,
+  disconnectBot: disconnectBot,
+  getBotStatus: getBotStatus,
 
-  disconnectBot: async (username: string) => {
-    return ipcRenderer.invoke("disconnect-bot", username);
-  },
-
-  getBotStatus: async (username: string) => {
-    return ipcRenderer.invoke("get-bot-status", username);
-  },
-
-  onBotDisconnected: (
-    callback: (data: { username: string; reason: string }) => void
-  ) => {
-    ipcRenderer.on("bot-disconnected", (_, data) => callback(data));
+  onBotDisconnected: (callback: (username: string, reason: string) => void) => {
+    ipcRenderer.on("bot-disconnected", (_, username, reason) =>
+      callback(username, reason)
+    );
   },
 });
+
+// Setup the backend for the bots
+ipcRenderer.send("setup");

@@ -29,6 +29,7 @@ export function createPlayer(
     });
 
     player.once("spawn", () => {
+      player.removeAllListeners();
       resolve(player);
     });
 
@@ -154,11 +155,6 @@ export class TextMCBot {
         }
       }
     });
-
-    // TODO: Consider removing later
-    this.player.on("error", err => {
-      console.error(`Bot Error: ${err}`);
-    });
   }
 
   /**
@@ -168,7 +164,7 @@ export class TextMCBot {
    * @param msg The message to send
    */
   message(recipient: string, msg: string) {
-    const tellraw = `/tellraw ${recipient} {{"text":"[BOT] <${this.username}> ${msg}","color":"${MESSAGE_COLOR}"}}`;
+    const tellraw = `/tellraw ${recipient} {"text":"[BOT] <${this.username}> ${msg}","color":"${MESSAGE_COLOR}"}`;
     this.player.chat(tellraw);
   }
 

@@ -10,10 +10,13 @@ export interface TextMCAPI {
     username: string
   ) => Promise<{ success: boolean; error?: string }>;
 
-  getBotStatus: (username: string) => Promise<{ connected: boolean }>;
+  getBotStatus: (username: string) => {
+    connected: boolean;
+    // TODO: Add types for any newly-added status data
+  };
 
   onBotDisconnected: (
-    callback: (data: { username: string; reason: string }) => void
+    callback: (username: string, reason: string) => void
   ) => void;
 }
 

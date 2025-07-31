@@ -44,7 +44,6 @@ const createWindow = () => {
 // Some APIs can only be used after this event occurs.
 app.on("ready", () => {
   createWindow();
-  setup();
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common
