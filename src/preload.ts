@@ -36,6 +36,3 @@ contextBridge.exposeInMainWorld("textmc", {
     );
   },
 });
-
-// Setup the backend for the bots
-ipcRenderer.send("setup");

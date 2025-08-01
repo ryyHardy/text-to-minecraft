@@ -5,6 +5,8 @@ import { MakerDeb } from "@electron-forge/maker-deb";
 import { MakerRpm } from "@electron-forge/maker-rpm";
 import { VitePlugin } from "electron-forge-plugin-vite";
 
+import path from "path";
+
 const config: ForgeConfig = {
   packagerConfig: {},
   rebuildConfig: {},
@@ -21,11 +23,11 @@ const config: ForgeConfig = {
       build: [
         {
           // `entry` is just an alias for `build.lib.entry` in the corresponding file of `config`.
-          entry: "src/main.ts",
+          entry: path.resolve(__dirname, "src/main.ts"),
           config: "vite.main.config.ts",
         },
         {
-          entry: "src/preload.ts",
+          entry: path.resolve(__dirname, "src/preload.ts"),
           config: "vite.preload.config.ts",
         },
       ],

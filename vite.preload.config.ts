@@ -1,12 +1,11 @@
 import { defineConfig } from "vite";
+import path from "path";
 
-// https://vitejs.dev/config
 export default defineConfig({
   build: {
-    outDir: ".vite/build/preload",
+    outDir: path.resolve(__dirname, ".vite/build/preload"),
     sourcemap: true,
     rollupOptions: {
-      external: ["mineflayer", "mineflayer-pathfinder", "electron"],
       output: {
         format: "cjs",
       },

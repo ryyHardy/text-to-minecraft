@@ -4,31 +4,27 @@ import { createPlayer, TextMCBot } from "./bot";
 const botInstances = new Map<string, TextMCBot>();
 
 export function setup() {
+  console.log("SETUP SETUP SETUP");
+
+  // connect-bot handler (add instance to map)
   ipcMain.handle(
     "connect-bot",
     async (
       event,
-      {
-        host,
-        port,
-        username,
-        exclusiveUsers = [],
-      }: {
-        host: string;
-        port: number;
-        username: string;
-        exclusiveUsers: string[];
-      }
+      host: string,
+      port: number,
+      username: string,
+      exclusiveUsers: string[] = []
     ) => {
       try {
         const player = await createPlayer(host, port, username);
         const bot = new TextMCBot(player, exclusiveUsers);
         botInstances.set(username, bot);
 
-        // Listen for bot disconnect
+        // Listen for bot disconnect and have the Main process send when that happens
         player.once("end", reason => {
           botInstances.delete(username);
-          event.sender.send("bot-disconnected", { username, reason });
+          event.sender.send("bot-disconnected", username, reason);
         });
 
         return { success: true, username };
@@ -38,6 +34,7 @@ export function setup() {
     }
   );
 
+  // disconnect-bot handler (delete instance from map)
   ipcMain.handle("disconnect-bot", async (_, username: string) => {
     const bot = botInstances.get(username);
     if (bot) {
@@ -48,10 +45,13 @@ export function setup() {
     return { success: false, error: "Bot not found" };
   });
 
+  // get-bot-status handler (get info on instance from map)
   ipcMain.handle("get-bot-status", (_, username: string) => {
-    return {
-      connected: botInstances.has(username),
-      // TODO: Add more status data here if desired
-    };
+    if (botInstances.has(username)) {
+      return {
+        connected: true,
+        //TODO: Add more status data here if desired
+      };
+    }
   });
 }
