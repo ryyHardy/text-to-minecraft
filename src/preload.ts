@@ -9,12 +9,13 @@ function connectBot(
   username: string,
   exclusiveUsers: string[] = []
 ) {
-  return ipcRenderer.invoke("connect-bot", {
+  return ipcRenderer.invoke(
+    "connect-bot",
     host,
     port,
     username,
-    exclusiveUsers,
-  });
+    exclusiveUsers
+  );
 }
 
 function disconnectBot(username: string) {

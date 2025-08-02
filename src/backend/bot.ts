@@ -16,8 +16,7 @@ const MESSAGE_COLOR = "light_purple";
 export function createPlayer(
   host: string,
   port: number,
-  username: string,
-  onDisconnect?: (reason: string) => void
+  username: string
 ): Promise<Bot> {
   return new Promise((resolve, reject) => {
     const player = createBot({
@@ -39,11 +38,6 @@ export function createPlayer(
           `Bot failed to connect to host '${host}' on port ${port}:\n${err}`
         )
       );
-    });
-
-    player.once("end", reason => {
-      player.removeAllListeners();
-      onDisconnect(reason);
     });
   });
 }
@@ -169,6 +163,7 @@ export class TextMCBot {
   }
 
   disconnect() {
+    this.message("@a", "Bye! Disconnecting...");
     this.player.end("disconnect() function");
   }
 }

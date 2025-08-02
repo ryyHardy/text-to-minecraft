@@ -26,6 +26,7 @@ function setup() {
 
         // Listen for bot disconnect and have the Main process send when that happens
         player.once("end", reason => {
+          player.removeAllListeners();
           botInstances.delete(username);
           event.sender.send("bot-disconnected", username, reason);
         });
