@@ -57,7 +57,7 @@ export default function ConnectForm() {
 
       {error && <div className='error'>{error}</div>}
 
-      <label htmlFor='host-input'>Host: </label>
+      <label htmlFor='host-input'>hostname</label>
       <input
         required
         placeholder='hostname'
@@ -68,15 +68,17 @@ export default function ConnectForm() {
         onChange={e => setHost(e.target.value)}
       />
 
-      <label htmlFor='port-input'>Port: </label>
+      <label htmlFor='port-input'>port</label>
       <input
         required
-        placeholder='25565'
+        placeholder='port'
         type='number'
         id='port-input'
         value={port}
         disabled={status === "connecting"}
-        onChange={e => setPort(parseInt(e.target.value))}
+        onChange={e =>
+          setPort(e.target.value ? parseInt(e.target.value) : undefined)
+        }
       />
 
       <button

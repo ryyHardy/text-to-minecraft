@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Oxanium:wght@200..800&display=swap");
 
 /* :root {
 } */
@@ -10,8 +10,9 @@
 }
 
 body {
-  font-family: Quicksand;
+  font-family: Oxanium, sans-serif;
+  margin: auto 0;
   display: grid;
-  height: 100vh;
+  min-height: 100vh;
   background-color: #281414;
 }
