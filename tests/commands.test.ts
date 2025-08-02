@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { parseCommand } from "../src/bot/commands";
+import { parseCommand } from "../src/backend/commands";
 
 describe("Command Parsing", () => {
   test("parses build command with prompt", () => {
