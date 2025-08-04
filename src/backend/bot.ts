@@ -1,8 +1,9 @@
 import { createBot, Bot } from "mineflayer";
 import { pathfinder, Movements, goals } from "mineflayer-pathfinder";
 
-import { parseCommand, getHelp } from "./commands";
+import { parseCommand, getHelpMsg } from "./commands";
 
+const HELP_COLOR = "lime";
 const MESSAGE_COLOR = "light_purple";
 
 /**
@@ -23,12 +24,10 @@ export function createPlayer(
       host: host,
       port: port,
       username: username,
-      version: "1.20.4",
       hideErrors: false,
     });
 
     player.once("spawn", () => {
-      player.removeAllListeners();
       resolve(player);
     });
 
@@ -41,11 +40,6 @@ export function createPlayer(
     });
   });
 }
-
-// interface Command {
-//   description: string;
-//   handler: (sender: string, args: yargsParser.Arguments) => void;
-// }
 
 export class TextMCBot {
   private player: Bot;
@@ -84,7 +78,11 @@ export class TextMCBot {
   private setupListeners() {
     // Fires when a chat message happens in the world
     this.player.on("chat", async (sender, msg) => {
-      if (sender === this.username || !msg.startsWith(`${this.username}:`))
+      if (
+        !sender ||
+        sender === this.username ||
+        !msg.startsWith(`${this.username}:`)
+      )
         return;
 
       if (
@@ -96,11 +94,13 @@ export class TextMCBot {
       }
 
       // 'username: command arg1 arg2' -> 'command arg1 arg2'
-      const cmd = msg.slice(this.username.length + 1);
+      const cmd = msg.slice(this.username.length + 1).trim();
+
       let parsed;
       try {
         parsed = parseCommand(cmd);
-      } catch {
+      } catch (e) {
+        console.error("Command Parsing Error:", e);
         this.message(
           sender,
           `Error reading command '${cmd}'. Try '${this.username}: help' for a list of commands.`
@@ -109,11 +109,16 @@ export class TextMCBot {
       }
 
       // Switch by the command name (argument 0)
-      switch (parsed._[0].toString()) {
+      switch (parsed._.length > 0 ? String(parsed._[0]) : "") {
         case "help": {
-          const helpMsg = await getHelp();
-          for (const line of helpMsg.split("\n")) {
-            this.message(sender, line);
+          try {
+            const helpMsg = await getHelpMsg();
+            for (const line of helpMsg.split("\n")) {
+              this.message(sender, line);
+            }
+          } catch (e) {
+            console.log("Help Menu Error:", e);
+            this.message(sender, "Error displaying help message");
           }
           break;
         }

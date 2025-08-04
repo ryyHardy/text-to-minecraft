@@ -1,27 +1,18 @@
 import yargs from "yargs";
-import stringArgv from "string-argv";
+import { parseArgsStringToArgv } from "string-argv";
 
-export function getCommands() {
+function getCommands() {
+  /**
+   * Declares bot commands, their arguments and descriptions
+   */
   return yargs()
-    .command(
-      "help",
-      "Show help menu for commands",
-      () => {} // no args
-    )
+    .command("help", "Show help menu for commands")
 
-    .command(
-      "exit",
-      "Disconnect from the world",
-      () => {} // no args
-    )
+    .command("exit", "Disconnect from the world")
 
-    .command(
-      "where",
-      "Get current location",
-      () => {} // no args
-    )
+    .command("where", "Get current location")
 
-    .command("come", "Walk to the sender", () => {})
+    .command("come", "Walk to the sender")
 
     .command("build <prompt>", "Build something based on a prompt", yargs => {
       return yargs.positional("prompt", {
@@ -44,12 +35,16 @@ export function getCommands() {
  * @returns The parsed arguments to the command
  */
 export function parseCommand(input: string) {
-  /**
-   * Declares bot commands, their arguments and descriptions
-   */
-  return getCommands().parseSync(stringArgv(input));
+  const args = parseArgsStringToArgv(input);
+  return getCommands().parseSync(args);
 }
 
-export async function getHelp(): Promise<string> {
+/**
+ * Get the help message of the command configuration as a string
+ *
+ * @returns Promise of the help message as a string
+ */
+export function getHelpMsg(): Promise<string> {
+  console.log("TEST!"); // ! Never shows up in the console somehow
   return getCommands().getHelp();
 }

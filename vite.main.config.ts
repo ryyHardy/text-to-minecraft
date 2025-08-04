@@ -6,5 +6,6 @@ export default defineConfig({
     rollupOptions: {
       external: ["mineflayer", "mineflayer-pathfinder", "yargs", "string-argv"],
     },
+    sourcemap: true,
   },
 });

@@ -21,15 +21,14 @@ function setup() {
     ) => {
       try {
         const player = await createPlayer(host, port, username);
-        const bot = new TextMCBot(player, exclusiveUsers);
-        botInstances.set(username, bot);
-
         // Listen for bot disconnect and have the Main process send when that happens
         player.once("end", reason => {
           player.removeAllListeners();
           botInstances.delete(username);
           event.sender.send("bot-disconnected", username, reason);
         });
+
+        botInstances.set(username, new TextMCBot(player, exclusiveUsers));
 
         return { success: true, username };
       } catch (error) {
