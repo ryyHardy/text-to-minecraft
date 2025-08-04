@@ -6,7 +6,7 @@ function getCommands() {
    * Declares bot commands, their arguments and descriptions
    */
   return yargs()
-    .command("help", "Show help menu for commands")
+    .command("helpme", "Show help menu for commands")
 
     .command("exit", "Disconnect from the world")
 

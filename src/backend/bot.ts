@@ -3,7 +3,7 @@ import { pathfinder, Movements, goals } from "mineflayer-pathfinder";
 
 import { parseCommand, getHelpMsg } from "./commands";
 
-const HELP_COLOR = "lime";
+const HELP_COLOR = "green";
 const MESSAGE_COLOR = "light_purple";
 
 /**
@@ -62,7 +62,7 @@ export class TextMCBot {
 
     this.message(
       "@a",
-      `Hello! Send '${this.username}: help' in the chat for a list of commands.`
+      `Hello! Send '${this.username}: helpme' in the chat for a list of commands.`
     );
 
     this.setupListeners();
@@ -103,22 +103,23 @@ export class TextMCBot {
         console.error("Command Parsing Error:", e);
         this.message(
           sender,
-          `Error reading command '${cmd}'. Try '${this.username}: help' for a list of commands.`
+          `Error reading command '${cmd}'. Try '${this.username}: helpme' for a list of commands.`
         );
         return;
       }
 
       // Switch by the command name (argument 0)
       switch (parsed._.length > 0 ? String(parsed._[0]) : "") {
-        case "help": {
+        case "helpme": {
           try {
             const helpMsg = await getHelpMsg();
+            this.tellraw(sender, "BOT HELP MENU:", HELP_COLOR);
             for (const line of helpMsg.split("\n")) {
-              this.message(sender, line);
+              this.tellraw(sender, line, HELP_COLOR);
             }
           } catch (e) {
             console.log("Help Menu Error:", e);
-            this.message(sender, "Error displaying help message");
+            this.message(sender, "Help message unavailable due to error");
           }
           break;
         }
@@ -157,14 +158,24 @@ export class TextMCBot {
   }
 
   /**
+   * Helpful wrapper for the Minecraft /tellraw command (for messaging entities)
+   * @param recipient A ussername or a [Minecraft target selector](https://minecraft.wiki/w/Target_selectors) specifying who receives the message
+   * @param text The text to send
+   * @param color Color of the text
+   */
+  private tellraw(recipient: string, text: string, color: string) {
+    const command = `/tellraw ${recipient} {"text":"${text}", "color": "${color}"}`;
+    this.player.chat(command);
+  }
+
+  /**
    * Send a message to a specific target
    *
    * @param target A username or a [Minecraft target selector](https://minecraft.wiki/w/Target_selectors) specifying who receives the message
    * @param msg The message to send
    */
   message(recipient: string, msg: string) {
-    const tellraw = `/tellraw ${recipient} {"text":"[BOT] <${this.username}> ${msg}","color":"${MESSAGE_COLOR}"}`;
-    this.player.chat(tellraw);
+    this.tellraw(recipient, `[BOT] <${this.username}> ${msg}`, MESSAGE_COLOR);
   }
 
   disconnect() {
