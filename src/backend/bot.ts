@@ -11,7 +11,6 @@ const MESSAGE_COLOR = "light_purple";
  * @param host The host of the server to connect to
  * @param port The port on that server
  * @param username The username to give to the bot's player
- * @param onDisconnect Optional callback for when the bot disconnects from the world
  * @returns Promise of the connected mineflayer bot
  */
 export function createPlayer(
