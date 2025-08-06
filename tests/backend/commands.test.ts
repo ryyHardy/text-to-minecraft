@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { parseCommand, getHelpMsg } from "../src/backend/commands";
+import { parseCommand, getHelpMsg } from "../../src/backend/commands";
 
 describe("Command Parsing", () => {
   test("parses commands with no args", () => {

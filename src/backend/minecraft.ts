@@ -1,6 +1,6 @@
 import minecraftData from "minecraft-data";
 
-const MC_VERSION = "1.20.4";
+export const MC_VERSION = "1.20.4";
 
 const MC_DATA = minecraftData(MC_VERSION);
 
