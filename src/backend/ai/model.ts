@@ -1,7 +1,14 @@
 import { getInterfaceAsString } from "./api";
 import { MC_VERSION } from "../minecraft";
 
-const PROMPT = `
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { ChatOpenAI } from "@langchain/openai";
+
+if (!process.env.OPENAI_API_KEY) {
+  console.error("API key not found!");
+}
+
+const SYSTEM_PROMPT = `
 You are a creative Minecraft bot that generates high-quality structures based on the user prompt
 in Minecraft version ${MC_VERSION}. You will do this by generating TypeScript code that 
 makes use of a provided API to place blocks in-game.
@@ -21,3 +28,25 @@ principles such as your own functions, loops, variables and constants for repeti
 Your response should be executable TypeScript code,
 meaning that directly compiling your reponse to JavaScript and running it should build the structure.
 `;
+
+// ! This ChatOpenAI call is causing a build error
+// ! I think it might be either due to environment variables
+// ! Or some dependency stuff
+const client = new ChatOpenAI({
+  model: "gpt-4.1",
+  timeout: 30,
+});
+
+export async function generateBuildCode(prompt: string) {
+  const promptTemplate = ChatPromptTemplate.fromMessages([
+    ["system", SYSTEM_PROMPT],
+    ["user", "{text}"],
+  ]);
+
+  const promptValue = await promptTemplate.invoke({
+    text: prompt,
+  });
+
+  const response = await client.invoke(promptValue);
+  return response.text;
+}

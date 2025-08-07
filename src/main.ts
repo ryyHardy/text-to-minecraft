@@ -3,6 +3,9 @@ import path from "path";
 
 import { createPlayer, TextMCBot } from "./backend/bot";
 
+import dotenv from "dotenv";
+dotenv.config();
+
 /// Maps all bot usernames to their instances
 const botInstances = new Map<string, TextMCBot>();
 
