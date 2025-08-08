@@ -1,11 +1,29 @@
-import { getInterfaceAsString } from "./api";
 import { MC_VERSION } from "../minecraft";
 
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { ChatOpenAI } from "@langchain/openai";
 
+import { Project } from "ts-morph";
+
+import path from "path";
+
+import dotenv from "dotenv";
+dotenv.config();
+
 if (!process.env.OPENAI_API_KEY) {
   console.error("API key not found!");
+}
+
+function getBotInterfaceString() {
+  const project = new Project();
+  // Resolve against the project root so this works when bundled (where __dirname points to .vite/build)
+  const apiFileAbsolutePath = path.resolve(
+    process.cwd(),
+    "src/backend/ai/api.ts"
+  );
+  const apiMorph = project.addSourceFileAtPath(apiFileAbsolutePath);
+  const face = apiMorph.getInterface("BotInterface");
+  return face.getFullText();
 }
 
 const SYSTEM_PROMPT = `
@@ -17,7 +35,7 @@ Assume your code execution environment is sandboxed, and the only API provided i
 a global object called \`botAPI\`, which implements the following interface:
 
 \`\`\`typescript
-${getInterfaceAsString().trim()}
+${getBotInterfaceString().trim()}
 \`\`\`
 
 For example, to access the imaginary function \`doAThing()\`, you would use \`botAPI.doAThing()\`
@@ -32,21 +50,20 @@ meaning that directly compiling your reponse to JavaScript and running it should
 // ! This ChatOpenAI call is causing a build error
 // ! I think it might be either due to environment variables
 // ! Or some dependency stuff
-const client = new ChatOpenAI({
-  model: "gpt-4.1",
-  timeout: 30,
-});
 
 export async function generateBuildCode(prompt: string) {
+  const client = new ChatOpenAI({
+    model: "gpt-4.1",
+    timeout: 30,
+  });
+
   const promptTemplate = ChatPromptTemplate.fromMessages([
     ["system", SYSTEM_PROMPT],
     ["user", "{text}"],
   ]);
-
   const promptValue = await promptTemplate.invoke({
     text: prompt,
   });
-
   const response = await client.invoke(promptValue);
   return response.text;
 }
