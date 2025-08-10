@@ -3,7 +3,7 @@ import { pathfinder, Movements, goals } from "mineflayer-pathfinder";
 
 import { parseCommand, getHelpMsg } from "./commands";
 
-import { runTSCode } from "./ai/execute";
+import { runJSCode } from "./ai/execute";
 import { generateBuildCode } from "./ai/model";
 
 const HELP_COLOR = "green";
@@ -154,11 +154,18 @@ export class TextMCBot {
         case "build": {
           // build handler
           let prompt = "";
-          if (parsed._.length > 1) {
-            prompt = String(parsed._[1]);
+          if (parsed.prompt) {
+            prompt = String(parsed.prompt);
           }
-          const code = await generateBuildCode(prompt);
-          // runTSCode(this.player, code);
+          try {
+            this.message(sender, `Building: '${prompt}'`);
+            const code = await generateBuildCode(prompt);
+            runJSCode(this.player, code);
+            this.message(sender, "Build completed!");
+          } catch (error) {
+            console.error("Build Error:", error);
+            this.message(sender, `Build failed: ${error.message}`);
+          }
           break;
         }
       }

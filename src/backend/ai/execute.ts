@@ -1,22 +1,14 @@
 import { createContext, runInContext } from "vm";
-import { transpileModule, ModuleKind } from "typescript";
 import { Bot } from "mineflayer";
 
 import { BotAPI } from "./api";
 
-export function runTSCode(bot: Bot, code: string) {
-  const jsCode = transpileModule(code, {
-    compilerOptions: {
-      module: ModuleKind.CommonJS,
-      strict: true,
-    },
-  }).outputText;
-
+export function runJSCode(bot: Bot, code: string) {
   const context = createContext({
     botAPI: new BotAPI(bot),
   });
 
-  runInContext(jsCode, context, {
+  runInContext(code, context, {
     displayErrors: true,
   });
 }

@@ -1,7 +1,7 @@
 import { MC_VERSION } from "../minecraft";
 
-import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { ChatOpenAI } from "@langchain/openai";
+import { StructuredOutputParser } from "langchain/output_parsers";
 
 import { Project } from "ts-morph";
 
@@ -16,7 +16,6 @@ if (!process.env.OPENAI_API_KEY) {
 
 function getBotInterfaceString() {
   const project = new Project();
-  // Resolve against the project root so this works when bundled (where __dirname points to .vite/build)
   const apiFileAbsolutePath = path.resolve(
     process.cwd(),
     "src/backend/ai/api.ts"
@@ -26,44 +25,46 @@ function getBotInterfaceString() {
   return face.getFullText();
 }
 
+const client = new ChatOpenAI({
+  model: "gpt-4o",
+  temperature: 0,
+  maxTokens: 10000,
+  timeout: 60 * 1000, // 60 second timeout
+  maxRetries: 2,
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
 const SYSTEM_PROMPT = `
-You are a creative Minecraft bot that generates high-quality structures based on the user prompt
-in Minecraft version ${MC_VERSION}. You will do this by generating TypeScript code that 
-makes use of a provided API to place blocks in-game.
+You are an AI Minecraft build assistant. You generate runnable JavaScript code to build structures in Minecraft version ${MC_VERSION}
+using ONLY the provided API (accessible through the \`botAPI\` global object). You must NOT explain anything, only output JavaScript code
+without markdown or comments.
 
-Assume your code execution environment is sandboxed, and the only API provided inside is
-a global object called \`botAPI\`, which implements the following interface:
-
-\`\`\`typescript
+API available:
 ${getBotInterfaceString().trim()}
-\`\`\`
 
-For example, to access the imaginary function \`doAThing()\`, you would use \`botAPI.doAThing()\`
-
-Use the described API to programmatically build structures in Minecraft. Try to use clean code
-principles such as your own functions, loops, variables and constants for repetitive code. 
-
-Your response should be executable TypeScript code,
-meaning that directly compiling your reponse to JavaScript and running it should build the structure.
+Rules:
+- Only call the functions listed in the API.
+- Do not include imports, require calls, or code that depends on outside libraries.
+- Code must be self-contained and executable inside the provided vm sandbox.
+- Output only JavaScript code, no other text.
 `;
 
-// ! This ChatOpenAI call is causing a build error
-// ! I think it might be either due to environment variables
-// ! Or some dependency stuff
-
 export async function generateBuildCode(prompt: string) {
-  const client = new ChatOpenAI({
-    model: "gpt-4.1",
-    timeout: 30,
+  const parser = StructuredOutputParser.fromNamesAndDescriptions({
+    code: "JavaScript code to execute in the Minecraft sandbox",
   });
 
-  const promptTemplate = ChatPromptTemplate.fromMessages([
-    ["system", SYSTEM_PROMPT],
-    ["user", "{text}"],
-  ]);
-  const promptValue = await promptTemplate.invoke({
-    text: prompt,
-  });
-  const response = await client.invoke(promptValue);
-  return response.text;
+  const fullPrompt = `
+  ${SYSTEM_PROMPT}
+
+  User request:
+  ${prompt}
+
+  ${parser.getFormatInstructions()}
+  `;
+
+  const response = await client.invoke(fullPrompt);
+  const parsed = await parser.parse(response.text);
+  console.info(`Code Generated:\n${parsed.code}`);
+  return parsed.code;
 }

@@ -1,12 +1,5 @@
 import { Bot } from "mineflayer";
 
-/*
-In TypeScript, you can't get the string form of an interface
-like you can with a function (they are compile-time-only objects)
-so I engaged in the tomfoolery of using an AST library to
-get it as a string instead
-*/
-
 interface BotInterface {
   /**
    * Place a block at (x,y,z) relative to the bot
