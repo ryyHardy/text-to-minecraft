@@ -1,7 +1,6 @@
 import { MC_VERSION } from "../minecraft";
 
 import { ChatOpenAI } from "@langchain/openai";
-import { StructuredOutputParser } from "langchain/output_parsers";
 
 import { Project } from "ts-morph";
 
@@ -25,8 +24,8 @@ function getBotInterfaceString() {
   return face.getFullText();
 }
 
-const client = new ChatOpenAI({
-  model: "gpt-4o",
+const model = new ChatOpenAI({
+  model: "chatgpt-4o-latest",
   temperature: 0,
   maxTokens: 10000,
   timeout: 60 * 1000, // 60 second timeout
@@ -35,7 +34,7 @@ const client = new ChatOpenAI({
 });
 
 const SYSTEM_PROMPT = `
-You are an AI Minecraft build assistant. You generate runnable JavaScript code to build structures in Minecraft version ${MC_VERSION}
+You are an expert AI Minecraft build assistant. You generate runnable JavaScript code to build structures in Minecraft version ${MC_VERSION}
 using ONLY the provided API (accessible through the \`botAPI\` global object). You must NOT explain anything, only output JavaScript code
 without markdown or comments.
 
@@ -49,22 +48,16 @@ Rules:
 - Output only JavaScript code, no other text.
 `;
 
-export async function generateBuildCode(prompt: string) {
-  const parser = StructuredOutputParser.fromNamesAndDescriptions({
-    code: "JavaScript code to execute in the Minecraft sandbox",
-  });
-
+export async function generateBuildCode(prompt: string): Promise<string> {
   const fullPrompt = `
   ${SYSTEM_PROMPT}
 
   User request:
   ${prompt}
-
-  ${parser.getFormatInstructions()}
   `;
 
-  const response = await client.invoke(fullPrompt);
-  const parsed = await parser.parse(response.text);
-  console.info(`Code Generated:\n${parsed.code}`);
-  return parsed.code;
+  const response = await model.invoke(fullPrompt);
+  const code = response.content as string;
+  console.info(`Build Code Generated:\n${code}`);
+  return code;
 }

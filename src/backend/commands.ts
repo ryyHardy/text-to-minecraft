@@ -23,7 +23,7 @@ function getCommands() {
 
     .exitProcess(false)
     .strictCommands()
-    .fail(msg => {
+    .fail((msg: string) => {
       throw new Error(msg);
     })
     .scriptName("<bot-username>:");
@@ -45,6 +45,5 @@ export function parseCommand(input: string) {
  * @returns Promise of the help message as a string
  */
 export function getHelpMsg(): Promise<string> {
-  console.log("TEST!"); // ! Never shows up in the console somehow
   return getCommands().getHelp();
 }

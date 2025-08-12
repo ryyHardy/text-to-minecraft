@@ -121,7 +121,7 @@ export class TextMCBot {
             }
           } catch (e) {
             console.log("Help Menu Error:", e);
-            this.message(sender, "Help message unavailable due to error");
+            this.message(sender, "Help message unavailable due to error.");
           }
           break;
         }

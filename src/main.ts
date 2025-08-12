@@ -55,6 +55,10 @@ function setup() {
         connected: true,
         //TODO: Add more status data here if desired
       };
+    } else {
+      return {
+        connected: false, // bot doesn't exist, basically
+      };
     }
   });
 }

@@ -6,18 +6,16 @@ export default function ConnectForm() {
     "disconnected" | "connecting" | "connected"
   >("disconnected");
   const [error, setError] = useState<string | null>(null);
-  const [host, setHost] = useState<string>("");
+  const [host, setHost] = useState<string>("localhost");
   const [port, setPort] = useState<number>(25565);
   const [username, setUsername] = useState<string>("TextMCBot");
 
   useEffect(() => {
     // Listen for disconnection events
-    const cleanup = window.textmc.onBotDisconnected((_, reason) => {
+    window.textmc.onBotDisconnected((_, reason) => {
       setStatus("disconnected");
       setError(`Bot disconnected: ${reason}`);
     });
-
-    return cleanup;
   }, []);
 
   async function handleSubmit(event: React.FormEvent) {
@@ -25,11 +23,11 @@ export default function ConnectForm() {
     setError(null);
 
     if (status === "connected") {
-      try {
-        await window.textmc.disconnectBot(username);
+      const result = await window.textmc.disconnectBot(username);
+      if (result.success) {
         setStatus("disconnected");
-      } catch (err) {
-        setError(err.message);
+      } else {
+        setError(result.error ?? null);
       }
       return;
     }
@@ -52,17 +50,31 @@ export default function ConnectForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form
+      onSubmit={handleSubmit}
+      key={status} // Forces a re-render every time the bot connects/disconnects
+    >
       <h2>Connect Bot</h2>
 
       {error && <div className='error'>{error}</div>}
+
+      <label htmlFor='username-input'>bot username</label>
+      <input
+        required
+        placeholder='username'
+        type='text'
+        name='username-input'
+        value={username}
+        onChange={e => setUsername(e.target.value)}
+        spellCheck={false}
+      />
 
       <label htmlFor='host-input'>hostname</label>
       <input
         required
         placeholder='hostname'
         type='text'
-        id='host-input'
+        name='host-input'
         value={host}
         disabled={status === "connecting"}
         onChange={e => setHost(e.target.value)}
@@ -73,7 +85,7 @@ export default function ConnectForm() {
         required
         placeholder='port'
         type='number'
-        id='port-input'
+        name='port-input'
         value={port}
         disabled={status === "connecting"}
         onChange={e =>
@@ -83,14 +95,14 @@ export default function ConnectForm() {
 
       <button
         type='submit'
-        className={`${status === "connected" ? "disconnect" : "connect"}-btn`}
+        className={`${status === "disconnected" ? "connect" : "disconnect"}-btn`}
         disabled={status === "connecting"}
       >
         {status === "connecting"
           ? "Connecting..."
           : status === "connected"
-          ? "Disconnect"
-          : "Connect"}
+            ? "Disconnect"
+            : "Connect"}
       </button>
     </form>
   );

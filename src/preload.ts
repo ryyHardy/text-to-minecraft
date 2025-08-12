@@ -32,8 +32,8 @@ contextBridge.exposeInMainWorld("textmc", {
   getBotStatus: getBotStatus,
 
   onBotDisconnected: (callback: (username: string, reason: string) => void) => {
-    ipcRenderer.on("bot-disconnected", (_, username, reason) =>
-      callback(username, reason)
-    );
+    ipcRenderer.on("bot-disconnected", (_, username, reason) => {
+      callback(username, reason);
+    });
   },
 });
