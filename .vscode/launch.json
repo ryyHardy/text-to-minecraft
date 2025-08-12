@@ -1,0 +1,17 @@
+{
+  // https://stackoverflow.com/questions/50664232/how-to-debug-renderer-process-of-electron-forge-react-typescript
+  // ^ TYSM hero from the distant past for providing the most clutch debug configuration that stands the test of time
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Electron: Main",
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron-forge-vscode-win",
+      "runtimeArgs": ["--remote-debugging-port=9223", "."],
+      "windows": {
+        "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron-forge-vscode-win.cmd"
+      }
+    }
+  ]
+}

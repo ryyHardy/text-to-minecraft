@@ -1,5 +1,54 @@
 {
+  "name": "text-to-minecraft",
+  "productName": "text-to-minecraft",
+  "version": "1.0.0",
+  "description": "My Electron application description",
+  "main": ".vite/build/main.js",
+  "scripts": {
+    "test": "vitest",
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "echo \"No linting configured\""
+  },
+  "keywords": [],
+  "author": {
+    "name": "ryyHardy",
+    "email": "ryyHardy@gmail.com"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@electron-forge/cli": "^7.8.2",
+    "@electron-forge/maker-deb": "^7.8.2",
+    "@electron-forge/maker-rpm": "^7.8.2",
+    "@electron-forge/maker-squirrel": "^7.8.2",
+    "@electron-forge/maker-zip": "^7.8.2",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.8.2",
+    "@electron-forge/plugin-fuses": "^7.8.2",
+    "@electron-forge/plugin-vite": "^7.8.3",
+    "@electron/fuses": "^1.8.0",
+    "@types/react": "^19.1.9",
+    "@types/react-dom": "^19.1.7",
+    "@types/yargs": "^17.0.33",
+    "@vitejs/plugin-react": "^4.7.0",
+    "electron": "37.2.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  },
   "dependencies": {
-    "mineflayer": "^4.0.0"
+    "@langchain/core": "^0.3.66",
+    "@langchain/openai": "^0.6.3",
+    "dotenv": "17.2.1",
+    "electron-squirrel-startup": "^1.0.1",
+    "langchain": "^0.3.30",
+    "mineflayer": "^4.31.0",
+    "mineflayer-pathfinder": "^2.4.5",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "string-argv": "^0.3.2",
+    "ts-morph": "^26.0.0",
+    "yargs": "^18.0.0"
   }
 }
