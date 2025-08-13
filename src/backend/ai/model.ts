@@ -1,5 +1,3 @@
-import { MC_VERSION } from "../minecraft";
-
 import { ChatOpenAI } from "@langchain/openai";
 
 import { Project } from "ts-morph";
@@ -34,7 +32,7 @@ const model = new ChatOpenAI({
 });
 
 const SYSTEM_PROMPT = `
-You are an expert AI Minecraft build assistant. You generate runnable JavaScript code to build structures in Minecraft version ${MC_VERSION}
+You are an expert AI Minecraft build assistant. You generate runnable JavaScript code to build structures in Minecraft
 using ONLY the provided API (accessible through the \`botAPI\` global object). You must NOT explain anything, only output JavaScript code
 without markdown or comments.
 
@@ -48,12 +46,18 @@ Rules:
 - Output only JavaScript code, no other text.
 `;
 
-export async function generateBuildCode(prompt: string): Promise<string> {
+export async function generateBuildCode(
+  prompt: string,
+  version: string
+): Promise<string> {
   const fullPrompt = `
   ${SYSTEM_PROMPT}
+  
+  Use Minecraft version ${version}.
 
   User request:
   ${prompt}
+
   `;
 
   const response = await model.invoke(fullPrompt);

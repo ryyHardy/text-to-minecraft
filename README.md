@@ -5,6 +5,8 @@
 TextToMinecraft is a bot that uses AI to build structures for you in-game based on your prompt! It is also equipped with other features like some basic pathfinding and the ability to interact with in-game
 commands.
 
+Powered by [mineflayer](https://github.com/PrismarineJS/mineflayer) and the rest of the [Prismarine.js](https://github.com/prismarinejs) project.
+
 > ### WARNING
 >
 > This project is still very much a work-in-progress, so use with caution if you plan on testing it in a Minecraft world. The bot can build some really cool things, but it could destroy preexisting landscapes and buildings in the process.
@@ -36,8 +38,8 @@ edit autoexec.bat
 
 ## Setup (Dev)
 
-0. Own Minecraft Java Edition (version 1.20.4). More versions will be supported soon. You will also need an OpenAI API key.
-1. Clone the repository on your machine, and open the command line in that directory.
+0. Own Minecraft Java Edition (check [mineflayer](https://github.com/PrismarineJS/mineflayer) for supported versions). Bedrock Edition is not supported yet. You will also need an OpenAI API key.
+1. Clone the repository on your machine, and open a command line in that directory.
 2. Substitute your OpenAI key in `.env.sample` and rename that file to `.env`.
 3. Run `npm install` to install dependencies.
 4. Run `npm start` and this will open the desktop app.
@@ -47,7 +49,7 @@ edit autoexec.bat
 The bot works by connecting to a LAN world. The process to set this up is outlined here:
 
 1. Have the Text-to-Minecraft desktop app opened.
-2. Have a Minecraft world open (Java version 1.20.4, for now).
+2. Have a Minecraft world open (again, check [mineflayer](https://github.com/PrismarineJS/mineflayer) for supported versions).
 3. Pause Minecraft and click `Open to LAN`. In the menu that appears, choose `Gamemode: Creative` and `Allow Cheats: On` (the bot needs cheats to function). Take note of the port number for later. You can set your own value for it if you want.
 4. In the desktop app, put the port you saved from the previous step in the port field. Leave the host field as `localhost`.
 5. Click connect. The bot will spawn in your world and say hello!
@@ -64,7 +66,7 @@ Players can issue commands to the bot through Minecraft's chat window by pressin
 - `where` will have the bot tell you where it is in the world, and in what dimension.
 - `exit` will have the bot disconnect from the server. The controller window will stay open in case you want to reconnect it.
 
-## Improvement Ideas
+## TODOs
 
 - The program could use a better logging system for both the controller window and command line output. Ideally, you could keep track of what a bot is generally doing without even checking Minecraft itself.
 - Improving the organization of bot-related code, especially in `bot.ts`.

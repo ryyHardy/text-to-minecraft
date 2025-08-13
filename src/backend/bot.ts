@@ -159,7 +159,7 @@ export class TextMCBot {
           }
           try {
             this.message(sender, `Building: '${prompt}'`);
-            const code = await generateBuildCode(prompt);
+            const code = await generateBuildCode(prompt, this.player.version);
             runJSCode(this.player, code);
             this.message(sender, "Build completed!");
           } catch (error) {
