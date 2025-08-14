@@ -98,76 +98,15 @@ export class TextMCBot {
       // 'username: command arg1 arg2' -> 'command arg1 arg2'
       const cmd = msg.slice(this.username.length + 1).trim();
 
-      let parsed;
       try {
-        parsed = parseCommand(cmd);
+        const parsed = parseCommand(cmd);
+        this.handleCommand(sender, parsed);
       } catch (e) {
         console.error("Command Parsing Error:", e);
         this.message(
           sender,
           `Error reading command '${cmd}'. Try '${this.username}: helpme' for a list of commands.`
         );
-        return;
-      }
-
-      // Switch by the command name (argument 0)
-      switch (parsed._.length > 0 ? String(parsed._[0]) : "") {
-        case "helpme": {
-          try {
-            const helpMsg = await getHelpMsg();
-            this.tellraw(sender, "BOT HELP MENU:", HELP_COLOR);
-            for (const line of helpMsg.split("\n")) {
-              this.tellraw(sender, line, HELP_COLOR);
-            }
-          } catch (e) {
-            console.log("Help Menu Error:", e);
-            this.message(sender, "Help message unavailable due to error.");
-          }
-          break;
-        }
-        case "exit": {
-          this.player.end("exit command");
-          break;
-        }
-        case "where": {
-          const pos = this.player.entity.position;
-          this.message(
-            sender,
-            `I'm at X: ${Math.floor(pos.x)}, Y: ${Math.floor(
-              pos.y
-            )}, Z: ${Math.floor(pos.z)} in the ${this.player.game.dimension}.`
-          );
-          break;
-        }
-        case "come": {
-          const target = this.player.players[sender]?.entity;
-          if (target) {
-            const pos = target.position;
-            this.player.pathfinder.setMovements(this.movements);
-            // TODO: Consider a try-catch here just in case
-            this.player.pathfinder.setGoal(
-              new goals.GoalNear(pos.x, pos.y, pos.z, 1)
-            );
-          }
-          break;
-        }
-        case "build": {
-          // build handler
-          let prompt = "";
-          if (parsed.prompt) {
-            prompt = String(parsed.prompt);
-          }
-          try {
-            this.message(sender, `Building: '${prompt}'`);
-            const code = await generateBuildCode(prompt, this.player.version);
-            runJSCode(this.player, code);
-            this.message(sender, "Build completed!");
-          } catch (error) {
-            console.error("Build Error:", error);
-            this.message(sender, `Build failed: ${error.message}`);
-          }
-          break;
-        }
       }
     });
   }
@@ -191,6 +130,68 @@ export class TextMCBot {
    */
   message(recipient: string, msg: string) {
     this.tellraw(recipient, `[BOT] <${this.username}> ${msg}`, MESSAGE_COLOR);
+  }
+
+  private async handleCommand(sender: string, parsed: any) {
+    // Switch by the command name (argument 0)
+    switch (parsed._.length > 0 ? String(parsed._[0]) : "") {
+      case "helpme": {
+        try {
+          const helpMsg = await getHelpMsg();
+          this.tellraw(sender, "BOT HELP MENU:", HELP_COLOR);
+          for (const line of helpMsg.split("\n")) {
+            this.tellraw(sender, line, HELP_COLOR);
+          }
+        } catch (e) {
+          console.log("Help Menu Error:", e);
+          this.message(sender, "Help message unavailable due to error.");
+        }
+        break;
+      }
+      case "exit": {
+        this.player.end("exit command");
+        break;
+      }
+      case "where": {
+        const pos = this.player.entity.position;
+        this.message(
+          sender,
+          `I'm at X: ${Math.floor(pos.x)}, Y: ${Math.floor(
+            pos.y
+          )}, Z: ${Math.floor(pos.z)} in the ${this.player.game.dimension}.`
+        );
+        break;
+      }
+      case "come": {
+        const target = this.player.players[sender]?.entity;
+        if (target) {
+          const pos = target.position;
+          this.player.pathfinder.setMovements(this.movements);
+          // TODO: Consider a try-catch here just in case
+          this.player.pathfinder.setGoal(
+            new goals.GoalNear(pos.x, pos.y, pos.z, 1)
+          );
+        }
+        break;
+      }
+      case "build": {
+        // build handler
+        let prompt = "";
+        if (parsed.prompt) {
+          prompt = String(parsed.prompt);
+        }
+        try {
+          this.message(sender, `Building: '${prompt}'`);
+          const code = await generateBuildCode(prompt, this.player.version);
+          runJSCode(this.player, code);
+          this.message(sender, "Build completed!");
+        } catch (error) {
+          console.error("Build Error:", error);
+          this.message(sender, `Build failed: ${error.message}`);
+        }
+        break;
+      }
+    }
   }
 
   disconnect() {
