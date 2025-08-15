@@ -23,7 +23,7 @@ function getBotInterfaceString() {
 }
 
 const model = new ChatOpenAI({
-  model: "chatgpt-4o-latest",
+  model: "gpt-4o",
   temperature: 0,
   maxTokens: 10000,
   timeout: 60 * 1000, // 60 second timeout
