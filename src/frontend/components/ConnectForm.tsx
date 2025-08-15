@@ -6,9 +6,6 @@ export default function ConnectForm() {
     "disconnected" | "connecting" | "connected"
   >("disconnected");
   const [error, setError] = useState<string | null>(null);
-  const [host, setHost] = useState<string>("localhost");
-  const [port, setPort] = useState<number>(25565);
-  const [username, setUsername] = useState<string>("TextMCBot");
 
   useEffect(() => {
     // Listen for disconnection events
@@ -20,7 +17,23 @@ export default function ConnectForm() {
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
+    const formData = new FormData(event.target as HTMLFormElement);
+
+    const host = formData.get("host-input") as string;
+    const port = parseInt(formData.get("port-input") as string);
+    const username = formData.get("username-input") as string;
+
     setError(null);
+
+    if (!host || !port || !username) {
+      setError("All fields are required");
+      return;
+    }
+
+    if (port < 1 || port > 65535) {
+      setError("Port must be between 1 and 65535");
+      return;
+    }
 
     if (status === "connected") {
       const result = await window.textmc.disconnectBot(username);
@@ -31,8 +44,6 @@ export default function ConnectForm() {
       }
       return;
     }
-
-    if (!host || !port) return;
 
     setStatus("connecting");
     try {
@@ -64,8 +75,7 @@ export default function ConnectForm() {
         placeholder='username'
         type='text'
         name='username-input'
-        value={username}
-        onChange={e => setUsername(e.target.value)}
+        defaultValue='TextMCBot'
         spellCheck={false}
       />
 
@@ -75,9 +85,8 @@ export default function ConnectForm() {
         placeholder='hostname'
         type='text'
         name='host-input'
-        value={host}
+        defaultValue='localhost'
         disabled={status === "connecting"}
-        onChange={e => setHost(e.target.value)}
       />
 
       <label htmlFor='port-input'>port</label>
@@ -86,11 +95,8 @@ export default function ConnectForm() {
         placeholder='port'
         type='number'
         name='port-input'
-        value={port}
+        defaultValue='25565'
         disabled={status === "connecting"}
-        onChange={e =>
-          setPort(e.target.value ? parseInt(e.target.value) : undefined)
-        }
       />
 
       <button
