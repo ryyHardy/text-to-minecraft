@@ -1,15 +1,35 @@
 import { ipcMain } from "electron";
 import { createPlayer, TextMCBot } from "./bot";
+import { getSecret, setSecret } from "./config/secrets";
 
 /** Manages the lifetime of all bot instances, indexed by username */
 const botInstances = new Map<string, TextMCBot>();
 
 /**
- * Initializes the backend by creating electron ipc handlers
+ * Initializes the backend and creates electron IPC handlers
  */
-export function setup() {
-  console.log("SETUP SETUP SETUP");
+export function init() {
+  initConfigIPC();
+  initBotIPC();
+}
 
+/**
+ * Creates IPC handlers for the config API
+ */
+function initConfigIPC() {
+  ipcMain.handle("set-secret", (_, name: string, value: string) => {
+    setSecret(name, value);
+  });
+
+  ipcMain.handle("secret-exists", (_, name: string) => {
+    return getSecret(name) !== undefined;
+  });
+}
+
+/**
+ * Creates IPC handlers for the bot API
+ */
+function initBotIPC() {
   // connect-bot handler (add instance to map)
   ipcMain.handle(
     "connect-bot",

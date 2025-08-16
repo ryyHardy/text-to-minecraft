@@ -1,4 +1,7 @@
 export interface TextMCAPI {
+  setSecret: (name: string, value: string) => void;
+  secretExists: (name: string) => boolean;
+
   connectBot: (
     host: string,
     port: number,

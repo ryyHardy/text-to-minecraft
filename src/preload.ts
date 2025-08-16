@@ -26,7 +26,18 @@ function getBotStatus(username: string) {
   return ipcRenderer.invoke("get-bot-status", username);
 }
 
+function setSecret(name: string, value: string) {
+  ipcRenderer.invoke("set-secret", name, value);
+}
+
+function secretExists(name: string) {
+  return ipcRenderer.invoke("secret-exists", name);
+}
+
 contextBridge.exposeInMainWorld("textmc", {
+  setSecret: setSecret,
+  secretExists: secretExists,
+
   connectBot: connectBot,
   disconnectBot: disconnectBot,
   getBotStatus: getBotStatus,
