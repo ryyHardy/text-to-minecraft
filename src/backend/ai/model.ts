@@ -65,7 +65,7 @@ export async function generateBuildCode(
   version: string
 ): Promise<string> {
   const model = new ChatGoogleGenerativeAI({
-    model: "gemini-2.5-pro", // TODO: Find a way to not hardcode the model and make it configurable
+    model: "gemini-2.5-flash", // TODO: Find a way to not hardcode the model and make it configurable
     temperature: 0,
     maxRetries: 2,
     maxOutputTokens: 10000, // same with stuff too, I suppose

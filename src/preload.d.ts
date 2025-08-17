@@ -1,8 +1,8 @@
 export interface TextMCAPI {
-  setSecret: (name: string, value: string) => void;
-  secretExists: (name: string) => boolean;
+  setSecret: (name: string, value: string) => Promise<void>;
+  secretExists: (name: string) => Promise<boolean>;
 
-  validateLLMKey: (key: string) => boolean;
+  validateLLMKey: (key: string) => Promise<boolean>;
 
   connectBot: (
     host: string,
@@ -15,10 +15,10 @@ export interface TextMCAPI {
     username: string
   ) => Promise<{ success: boolean; error?: string }>;
 
-  getBotStatus: (username: string) => {
+  getBotStatus: (username: string) => Promise<{
     connected: boolean;
     // TODO: Add types for any newly-added status data
-  };
+  }>;
 
   onBotDisconnected: (
     callback: (username: string, reason: string) => void

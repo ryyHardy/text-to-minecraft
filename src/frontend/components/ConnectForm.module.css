@@ -3,7 +3,7 @@ h2 {
   letter-spacing: 0.05em;
 }
 
-form {
+.form {
   display: flex;
   flex-direction: column;
   background-color: gainsboro;
@@ -14,11 +14,11 @@ form {
   margin: 1rem;
 }
 
-label {
+.label {
   text-transform: uppercase;
 }
 
-input {
+.input {
   box-shadow: 0 0 1px black;
   margin-bottom: 0.5rem;
   display: block;
@@ -29,7 +29,7 @@ input {
   max-width: 80%;
 }
 
-button {
+.button {
   transition: 0.2s all ease;
   font-weight: bold;
   width: 100%;
@@ -54,12 +54,12 @@ button {
   color: white;
 }
 
-button:active {
+.button:active {
   color: white;
   box-shadow: 0 -3px black;
 }
 
-button:disabled {
+.button:disabled {
   background-color: rgb(180, 180, 180);
   color: black;
 }

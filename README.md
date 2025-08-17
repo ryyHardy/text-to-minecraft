@@ -45,7 +45,7 @@ edit autoexec.bat
 
 NOTE: The first time you run the app, it will prompt you to enter a Gemini API key, which you can get for free (with a solid free tier) using [Google AI Studio](https://aistudio.google.com/).
 
-- This key will be used for the bot's AI building capabilities (1 build = 1 request. Currently, Gemini 2.5 Pro is the model. See [rate limits](https://ai.google.dev/gemini-api/docs/rate-limits))
+- This key will be used for the bot's AI building capabilities (1 build = 1 request. Currently, Gemini 2.5 Flash is the model. See [rate limits](https://ai.google.dev/gemini-api/docs/rate-limits))
 
 ## Connecting the bot to your world
 

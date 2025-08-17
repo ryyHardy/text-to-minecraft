@@ -15,7 +15,7 @@
     "paths": {
       "*": ["node_modules/*"]
     },
-    "types": ["./src/preload.d.ts"]
+    "types": ["./global.d.ts", "./src/preload.d.ts"]
   },
   "include": ["src/**/*"]
 }
