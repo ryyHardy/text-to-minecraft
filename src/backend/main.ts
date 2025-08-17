@@ -1,4 +1,5 @@
 import { ipcMain } from "electron";
+import { validateOpenAIKey } from "./ai/model";
 import { createPlayer, TextMCBot } from "./bot";
 import { getSecret, setSecret } from "./config/secrets";
 
@@ -23,6 +24,12 @@ function initConfigIPC() {
 
   ipcMain.handle("secret-exists", (_, name: string) => {
     return getSecret(name) !== undefined;
+  });
+}
+
+function initAiIPC() {
+  ipcMain.handle("validate-openai-key", (_, key: string) => {
+    return validateOpenAIKey(key);
   });
 }
 

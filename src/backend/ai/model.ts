@@ -1,4 +1,4 @@
-import { ChatOpenAI } from "@langchain/openai";
+import { ChatOpenAI, OpenAI } from "@langchain/openai";
 
 import { Project } from "ts-morph";
 
@@ -9,6 +9,18 @@ dotenv.config();
 
 if (!process.env.OPENAI_API_KEY) {
   console.error("API key not found!");
+}
+
+export async function validateOpenAIKey(key: string) {
+  try {
+    const openai = new ChatOpenAI({
+      apiKey: key,
+    });
+    await openai.client.models.list();
+    return true;
+  } catch (_) {
+    return false;
+  }
 }
 
 function getBotInterfaceString() {

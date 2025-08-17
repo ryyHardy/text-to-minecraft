@@ -3,6 +3,18 @@
 
 import { contextBridge, ipcRenderer } from "electron";
 
+function setSecret(name: string, value: string) {
+  ipcRenderer.invoke("set-secret", name, value);
+}
+
+function secretExists(name: string) {
+  return ipcRenderer.invoke("secret-exists", name);
+}
+
+function validateOpenAIKey(key: string) {
+  return ipcRenderer.invoke("validate-openai-key", key);
+}
+
 function connectBot(
   host: string,
   port: number,
@@ -26,17 +38,11 @@ function getBotStatus(username: string) {
   return ipcRenderer.invoke("get-bot-status", username);
 }
 
-function setSecret(name: string, value: string) {
-  ipcRenderer.invoke("set-secret", name, value);
-}
-
-function secretExists(name: string) {
-  return ipcRenderer.invoke("secret-exists", name);
-}
-
 contextBridge.exposeInMainWorld("textmc", {
   setSecret: setSecret,
   secretExists: secretExists,
+
+  validateOpenAIKey: validateOpenAIKey,
 
   connectBot: connectBot,
   disconnectBot: disconnectBot,
