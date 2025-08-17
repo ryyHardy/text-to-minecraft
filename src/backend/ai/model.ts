@@ -1,4 +1,6 @@
-import { ChatOpenAI, OpenAI } from "@langchain/openai";
+import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
+
+import { getSecret } from "../config/secrets";
 
 import { Project } from "ts-morph";
 
@@ -7,16 +9,25 @@ import path from "path";
 import dotenv from "dotenv";
 dotenv.config();
 
-if (!process.env.OPENAI_API_KEY) {
-  console.error("API key not found!");
-}
-
-export async function validateOpenAIKey(key: string) {
+export async function validateLLMKey(key: string) {
   try {
-    const openai = new ChatOpenAI({
-      apiKey: key,
-    });
-    await openai.client.models.list();
+    const resp = await fetch(
+      "https://generativelanguage.googleapis.com/v1/models",
+      {
+        headers: {
+          Authorization: `Bearer ${key}`,
+        },
+      }
+    );
+
+    if (!resp.ok) {
+      return false;
+    }
+
+    // TODO: Think about an extra check of the JSON itself if needed
+    // const data = await resp.json();
+    // console.log("Validation response received:", data);
+
     return true;
   } catch (_) {
     return false;
@@ -33,15 +44,6 @@ function getBotInterfaceString() {
   const face = apiMorph.getInterface("BotInterface");
   return face.getFullText();
 }
-
-const model = new ChatOpenAI({
-  model: "gpt-4o",
-  temperature: 0,
-  maxTokens: 10000,
-  timeout: 60 * 1000, // 60 second timeout
-  maxRetries: 2,
-  apiKey: process.env.OPENAI_API_KEY,
-});
 
 const SYSTEM_PROMPT = `
 You are an expert AI Minecraft build assistant. You generate runnable JavaScript code to build structures in Minecraft
@@ -62,6 +64,14 @@ export async function generateBuildCode(
   prompt: string,
   version: string
 ): Promise<string> {
+  const model = new ChatGoogleGenerativeAI({
+    model: "gemini-2.5-pro", // TODO: Find a way to not hardcode the model and make it configurable
+    temperature: 0,
+    maxRetries: 2,
+    maxOutputTokens: 10000, // same with stuff too, I suppose
+    apiKey: getSecret("gemini-api-key"), // maybe don't call getSecret here, as well
+  });
+
   const fullPrompt = `
   ${SYSTEM_PROMPT}
   

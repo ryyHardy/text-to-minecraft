@@ -1,5 +1,5 @@
 /**
- * Config for securely storing secrets locally (mainly API keys for the AI, but it could be anything)
+ * Config for securely storing secrets locally (such as API keys for the AI or anything that needs encryption)
  */
 
 import { app, safeStorage } from "electron";

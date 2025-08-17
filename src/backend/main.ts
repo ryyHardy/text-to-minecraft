@@ -1,5 +1,5 @@
 import { ipcMain } from "electron";
-import { validateOpenAIKey } from "./ai/model";
+import { validateLLMKey } from "./ai/model";
 import { createPlayer, TextMCBot } from "./bot";
 import { getSecret, setSecret } from "./config/secrets";
 
@@ -11,6 +11,7 @@ const botInstances = new Map<string, TextMCBot>();
  */
 export function init() {
   initConfigIPC();
+  initAiIPC();
   initBotIPC();
 }
 
@@ -27,9 +28,12 @@ function initConfigIPC() {
   });
 }
 
+/**
+ * Creates IPC handlers for the AI features
+ */
 function initAiIPC() {
-  ipcMain.handle("validate-openai-key", (_, key: string) => {
-    return validateOpenAIKey(key);
+  ipcMain.handle("validate-llm-key", (_, key: string) => {
+    return validateLLMKey(key);
   });
 }
 

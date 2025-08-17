@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "@langchain/core": "^0.3.66",
-    "@langchain/openai": "^0.6.3",
+    "@langchain/google-genai": "^0.2.16",
     "dotenv": "17.2.1",
     "electron-squirrel-startup": "^1.0.1",
     "langchain": "^0.3.30",

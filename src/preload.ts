@@ -11,8 +11,8 @@ function secretExists(name: string) {
   return ipcRenderer.invoke("secret-exists", name);
 }
 
-function validateOpenAIKey(key: string) {
-  return ipcRenderer.invoke("validate-openai-key", key);
+function validateLLMKey(key: string) {
+  return ipcRenderer.invoke("validate-llm-key", key);
 }
 
 function connectBot(
@@ -42,7 +42,7 @@ contextBridge.exposeInMainWorld("textmc", {
   setSecret: setSecret,
   secretExists: secretExists,
 
-  validateOpenAIKey: validateOpenAIKey,
+  validateLLMKey: validateLLMKey,
 
   connectBot: connectBot,
   disconnectBot: disconnectBot,

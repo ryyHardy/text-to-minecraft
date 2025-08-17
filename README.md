@@ -38,11 +38,14 @@ edit autoexec.bat
 
 ## Setup (Dev)
 
-0. Own Minecraft Java Edition (check [mineflayer](https://github.com/PrismarineJS/mineflayer) for supported versions). Bedrock Edition is not supported yet. You will also need an OpenAI API key.
+0. Own Minecraft Java Edition (check [mineflayer](https://github.com/PrismarineJS/mineflayer) for supported versions). Bedrock Edition is not supported yet.
 1. Clone the repository on your machine, and open a command line in that directory.
-2. Substitute your OpenAI key in `.env.sample` and rename that file to `.env`.
-3. Run `npm install` to install dependencies.
-4. Run `npm start` and this will open the desktop app.
+2. Run `npm install` to install dependencies.
+3. Run `npm start` and this will open the desktop app.
+
+NOTE: The first time you run the app, it will prompt you to enter a Gemini API key, which you can get for free (with a solid free tier) using [Google AI Studio](https://aistudio.google.com/).
+
+- This key will be used for the bot's AI building capabilities (1 build = 1 request. Currently, Gemini 2.5 Pro is the model. See [rate limits](https://ai.google.dev/gemini-api/docs/rate-limits))
 
 ## Connecting the bot to your world
 
@@ -71,6 +74,7 @@ Players can issue commands to the bot through Minecraft's chat window by pressin
 - The program could use a better logging system for both the controller window and command line output. Ideally, you could keep track of what a bot is generally doing without even checking Minecraft itself.
 - Improving the organization of bot-related code, especially in `bot.ts`.
 - Adding more bot configuration in the UI, including a "whitelist" for players allowed to command the bot.
+- Find a way to allow users to switch LLM models to give them more usage, but at a lower quality.
 - Eventually finding a way to have multiple bots (that would be fun).
 - Finding a way to handle LLM API keys safely. Right now, it just loads the keys from a .env file, which is not ideal in a release.
 - The bot has little to no awareness of its surroundings which is dangerous on more populated worlds.

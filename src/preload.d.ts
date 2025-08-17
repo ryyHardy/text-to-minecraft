@@ -2,7 +2,7 @@ export interface TextMCAPI {
   setSecret: (name: string, value: string) => void;
   secretExists: (name: string) => boolean;
 
-  validateOpenAIKey: (key: string) => boolean;
+  validateLLMKey: (key: string) => boolean;
 
   connectBot: (
     host: string,
