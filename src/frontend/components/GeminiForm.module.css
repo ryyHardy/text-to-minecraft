@@ -18,7 +18,8 @@
 }
 
 .api-key-notice a {
-  color: hsl(235, 100%, 50%);
+  color: hsl(235, 100%, 20%);
+  font-weight: 600;
 }
 
 .label {
@@ -37,7 +38,7 @@
 }
 
 .button {
-  /* transition: 0.2s all ease; */
+  transition: 0.2s all ease;
   font-weight: bold;
   width: 100%;
   margin-top: 0.5rem;
@@ -48,7 +49,8 @@
   border: none;
   box-shadow: 0 3px black;
   border-radius: 0.5rem;
-  background-color: hsl(203, 60%, 60%);
+  color: white;
+  background-color: hsl(190, 75%, 40%);
   border: 1px solid black;
 }
 

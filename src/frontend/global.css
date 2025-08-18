@@ -23,7 +23,8 @@ LIGHT THEME
 */
 @media (prefers-color-scheme: light) {
   body {
-    background-color: hsl(140, 40%, 50%);
+    /* background-color: hsl(140, 40%, 50%); */
+    background-color: hsl(210, 100%, 40%);
   }
 
   form {
