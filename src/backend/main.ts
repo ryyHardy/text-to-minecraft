@@ -9,7 +9,7 @@ const botInstances = new Map<string, TextMCBot>();
 /**
  * Initializes the backend and creates electron IPC handlers
  */
-export function init() {
+export default function init() {
   initConfigIPC();
   initAiIPC();
   initBotIPC();
