@@ -30,6 +30,10 @@ LIGHT THEME
   form {
     background-color: hsl(0, 0%, 85%);
   }
+
+  form section {
+    background-color: hsl(0, 0%, 65%);
+  }
 }
 
 /*
@@ -42,5 +46,9 @@ DARK THEME
 
   form {
     background-color: hsl(0, 0%, 30%);
+  }
+
+  form section {
+    background-color: hsl(0, 0%, 50%);
   }
 }

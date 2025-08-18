@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import styles from "./ConnectForm.module.css";
 
-export default function ConnectForm() {
+type ConnectFormProps = {
+  onNavigateToSettings: () => void;
+};
+
+export default function ConnectForm({ onNavigateToSettings }: ConnectFormProps) {
   const [status, setStatus] = useState<
     "disconnected" | "connecting" | "connected"
   >("disconnected");
@@ -61,74 +65,84 @@ export default function ConnectForm() {
   }
 
   return (
-    <form
-      className={styles.form}
-      onSubmit={handleSubmit}
-      key={status} // Forces a re-render every time the bot connects/disconnects
-    >
-      <h2>Connect Bot</h2>
-
-      {error && <div className={styles.error}>{error}</div>}
-
-      <label
-        className={styles.label}
-        htmlFor='username-input'
+    <div className={styles.container}>
+      <form
+        className={styles.form}
+        onSubmit={handleSubmit}
+        key={status} // Forces a re-render every time the bot connects/disconnects
       >
-        bot username
-      </label>
-      <input
-        className={styles.input}
-        required
-        placeholder='username'
-        type='text'
-        name='username-input'
-        defaultValue='TextMCBot'
-        spellCheck={false}
-      />
+        <h2>Connect Bot</h2>
 
-      <label
-        className={styles.label}
-        htmlFor='host-input'
-      >
-        hostname
-      </label>
-      <input
-        className={styles.input}
-        required
-        placeholder='hostname'
-        type='text'
-        name='host-input'
-        defaultValue='localhost'
-        disabled={status === "connecting"}
-      />
+        {error && <div className={styles.error}>{error}</div>}
 
-      <label
-        className={styles.label}
-        htmlFor='port-input'
-      >
-        port
-      </label>
-      <input
-        className={styles.input}
-        required
-        placeholder='port'
-        type='number'
-        name='port-input'
-        defaultValue='25565'
-        disabled={status === "connecting"}
-      />
+        <label
+          className={styles.label}
+          htmlFor='username-input'
+        >
+          bot username
+        </label>
+        <input
+          className={styles.input}
+          required
+          placeholder='username'
+          type='text'
+          name='username-input'
+          defaultValue='TextMCBot'
+          spellCheck={false}
+        />
+
+        <label
+          className={styles.label}
+          htmlFor='host-input'
+        >
+          hostname
+        </label>
+        <input
+          className={styles.input}
+          required
+          placeholder='hostname'
+          type='text'
+          name='host-input'
+          defaultValue='localhost'
+          disabled={status === "connecting"}
+        />
+
+        <label
+          className={styles.label}
+          htmlFor='port-input'
+        >
+          port
+        </label>
+        <input
+          className={styles.input}
+          required
+          placeholder='port'
+          type='number'
+          name='port-input'
+          defaultValue='25565'
+          disabled={status === "connecting"}
+        />
+
+        <button
+          type='submit'
+          className={`${styles.button} ${status === "disconnected" ? styles.connectBtn : styles.disconnectBtn}`}
+          disabled={status === "connecting"}
+        >
+          {status === "connecting"
+            ? "Connecting..."
+            : status === "connected"
+              ? "Disconnect"
+              : "Connect"}
+        </button>
+      </form>
 
       <button
-        type='submit'
-        className={`${styles.button} ${status === "disconnected" ? styles.connectBtn : styles.disconnectBtn}`}
-        disabled={status === "connecting"}
+        type="button"
+        className={styles.settingsButton}
+        onClick={onNavigateToSettings}
       >
-        {status === "connecting"
-          ? "Connecting..."
-          : status === "connected"
-            ? "Disconnect"
-            : "Connect"}
+        ⚙️ Settings
       </button>
-    </form>
+    </div>
   );
 }

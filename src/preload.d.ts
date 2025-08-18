@@ -1,6 +1,7 @@
 export interface TextMCAPI {
   setSecret: (name: string, value: string) => Promise<void>;
   secretExists: (name: string) => Promise<boolean>;
+  removeSecret: (name: string) => Promise<void>;
 
   validateLLMKey: (key: string) => Promise<boolean>;
 

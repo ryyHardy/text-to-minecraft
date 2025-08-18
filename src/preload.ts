@@ -11,6 +11,10 @@ function secretExists(name: string) {
   return ipcRenderer.invoke("secret-exists", name);
 }
 
+function removeSecret(name: string) {
+  return ipcRenderer.invoke("remove-secret", name);
+}
+
 function validateLLMKey(key: string) {
   return ipcRenderer.invoke("validate-llm-key", key);
 }
@@ -41,6 +45,7 @@ function getBotStatus(username: string) {
 contextBridge.exposeInMainWorld("textmc", {
   setSecret: setSecret,
   secretExists: secretExists,
+  removeSecret: removeSecret,
 
   validateLLMKey: validateLLMKey,
 

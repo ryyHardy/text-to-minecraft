@@ -59,7 +59,7 @@ export default function GeminiForm({ onApiKeySubmitted }: GeminiFormProps) {
       <input
         className={styles.input}
         required
-        type='text'
+        type='password'
         name='apikey-input'
         placeholder='Paste Gemini API Key Here'
         spellCheck={false}

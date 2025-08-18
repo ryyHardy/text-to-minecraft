@@ -55,6 +55,7 @@ h2 {
 
 .button:active {
   color: white;
+  color: black;
   box-shadow: 0 -3px black;
 }
 
@@ -68,4 +69,25 @@ h2 {
   margin: 0.5rem 0.5rem 0.5rem 0;
   padding: 0.5rem;
   border-radius: 5px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.settings-button {
+  background-color: hsl(200, 10%, 50%);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.settings-button:hover {
+  background-color: hsl(200, 10%, 40%);
 }

@@ -1,7 +1,7 @@
 import { ipcMain } from "electron";
 import { validateLLMKey } from "./ai/model";
 import { createPlayer, TextMCBot } from "./bot";
-import { getSecret, setSecret } from "./config/secrets";
+import { getSecret, removeSecret, setSecret } from "./config/secrets";
 
 /** Manages the lifetime of all bot instances, indexed by username */
 const botInstances = new Map<string, TextMCBot>();
@@ -25,6 +25,10 @@ function initConfigIPC() {
 
   ipcMain.handle("secret-exists", (_, name: string) => {
     return getSecret(name) !== undefined;
+  });
+
+  ipcMain.handle("remove-secret", (_, name: string) => {
+    removeSecret(name);
   });
 }
 
