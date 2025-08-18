@@ -2,7 +2,6 @@
   display: flex;
   gap: 0.5rem;
   flex-direction: column;
-  background-color: gainsboro;
   padding: 1rem;
   border-radius: 0.5rem;
   place-self: center;
@@ -11,10 +10,15 @@
 }
 
 .api-key-notice {
+  color: white;
   padding: 1rem;
   border-radius: 0.5rem;
-  background-color: hsl(120, 40%, 50%);
+  background-color: hsl(120, 100%, 30%);
   line-height: 1.4rem;
+}
+
+.api-key-notice a {
+  color: black;
 }
 
 .label {
@@ -44,7 +48,7 @@
   border: none;
   box-shadow: 0 3px black;
   border-radius: 0.5rem;
-  background-color: lightskyblue;
+  background-color: hsl(203, 60%, 60%);
   border: 1px solid black;
 }
 
@@ -54,7 +58,8 @@
 }
 
 .error {
-  background-color: rgb(255, 180, 180);
+  background-color: hsl(0, 100%, 75%);
+  color: black;
   margin: 0.5rem 0.5rem 0.5rem 0;
   padding: 0.5rem;
   border-radius: 5px;

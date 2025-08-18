@@ -9,7 +9,7 @@ export default function GeminiForm({ onApiKeySubmitted }: GeminiFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  function handleSubmit(event: React.FormEvent) {
+  async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     setIsSubmitting(true);
     setError(null);
@@ -18,7 +18,7 @@ export default function GeminiForm({ onApiKeySubmitted }: GeminiFormProps) {
     const key = formData.get("apikey-input") as string;
 
     try {
-      const isValid = window.textmc.validateLLMKey(key);
+      const isValid = await window.textmc.validateLLMKey(key);
 
       if (isValid) {
         // Save the API key
