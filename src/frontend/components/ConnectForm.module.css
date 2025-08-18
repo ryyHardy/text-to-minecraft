@@ -6,7 +6,6 @@ h2 {
 .form {
   display: flex;
   flex-direction: column;
-  background-color: gainsboro;
   padding: 1rem;
   border-radius: 0.5rem;
   place-self: center;

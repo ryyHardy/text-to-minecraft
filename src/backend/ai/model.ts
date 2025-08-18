@@ -1,34 +1,21 @@
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
+import { Project } from "ts-morph";
+import path from "path";
 
 import { getSecret } from "../config/secrets";
 
-import { Project } from "ts-morph";
-
-import path from "path";
-
-import dotenv from "dotenv";
-dotenv.config();
-
 export async function validateLLMKey(key: string) {
+  const url = `https://generativelanguage.googleapis.com/v1/models?key=${key}`;
   try {
-    const resp = await fetch(
-      "https://generativelanguage.googleapis.com/v1/models",
-      {
-        headers: {
-          Authorization: `Bearer ${key}`,
-        },
-      }
-    );
+    const response = await fetch(url);
+    const data = await response.json();
 
-    if (!resp.ok) {
+    // If API key is invalid, Google responds with an error field in the JSON
+    if (data.error) {
       return false;
     }
-
-    // TODO: Think about an extra check of the JSON itself if needed
-    // const data = await resp.json();
-    // console.log("Validation response received:", data);
-
-    return true;
+    // Check if an array of models is actually given, just to be sure
+    return Array.isArray(data.models);
   } catch (_) {
     return false;
   }

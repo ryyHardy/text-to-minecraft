@@ -1,0 +1,45 @@
+@import url("https://fonts.googleapis.com/css2?family=Oxanium:wght@200..800&display=swap");
+
+:root {
+  color-scheme: light dark;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Oxanium, sans-serif;
+  margin: auto 0;
+  align-items: center;
+  display: grid;
+  min-height: 100vh;
+}
+
+/*
+LIGHT THEME
+*/
+@media (prefers-color-scheme: light) {
+  body {
+    background-color: hsl(140, 40%, 50%);
+  }
+
+  form {
+    background-color: hsl(0, 0%, 85%);
+  }
+}
+
+/*
+DARK THEME
+*/
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: hsl(0, 35%, 15%);
+  }
+
+  form {
+    background-color: hsl(0, 0%, 30%);
+  }
+}
