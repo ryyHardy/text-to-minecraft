@@ -47,6 +47,7 @@
     "mineflayer-pathfinder": "^2.4.5",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-router": "^7.8.1",
     "string-argv": "^0.3.2",
     "ts-morph": "^26.0.0",
     "yargs": "^18.0.0"

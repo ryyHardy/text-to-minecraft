@@ -117,7 +117,7 @@ export default function Settings({
                   await window.textmc.setSecret("gemini-api-key", "");
                   setApiKeyExists(false);
                   setSuccess("API key removed successfully!");
-                  onApiKeyRemoved(); // Call the removal callback instead
+                  onApiKeyRemoved();
                 } catch (error) {
                   setError("Failed to remove API key");
                 }
