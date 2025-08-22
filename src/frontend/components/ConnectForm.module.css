@@ -9,8 +9,9 @@ h2 {
   padding: 1rem;
   border-radius: 0.5rem;
   place-self: center;
-  width: min(50%, 500px);
+  width: min(90%, 500px);
   margin: 1rem;
+  min-width: 300px;
 }
 
 .label {

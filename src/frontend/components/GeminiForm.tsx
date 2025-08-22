@@ -1,11 +1,20 @@
 import { useState } from "react";
 import styles from "./GeminiForm.module.css";
 
+import { useSetup } from "../contexts/SetupContext";
+
 type GeminiFormProps = {
-  onApiKeySubmitted: () => void;
+  /** Optional callback for when the form is submitted successfully */
+  onValidSubmit?: () => void;
+  /** Whether this is for initial setup (true) or settings update (false) */
+  isSetup?: boolean;
 };
 
-export default function GeminiForm({ onApiKeySubmitted }: GeminiFormProps) {
+export default function GeminiForm({
+  onValidSubmit,
+  isSetup = true,
+}: GeminiFormProps) {
+  const { markSetupComplete } = useSetup();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -23,7 +32,12 @@ export default function GeminiForm({ onApiKeySubmitted }: GeminiFormProps) {
       if (isValid) {
         // Save the API key
         window.textmc.setSecret("gemini-api-key", key);
-        onApiKeySubmitted();
+
+        if (isSetup) {
+          markSetupComplete();
+        } else {
+          onValidSubmit?.();
+        }
       } else {
         setError("Invalid API key. Please check your key and try again.");
       }

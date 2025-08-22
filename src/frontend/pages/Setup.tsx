@@ -1,3 +1,13 @@
+import styles from "./Setup.module.css";
+
+import GeminiForm from "../components/GeminiForm";
+
 export default function Setup() {
-  return <div>Welcome! Setup time!</div>;
+  return (
+    <>
+      <main>
+        <GeminiForm />
+      </main>
+    </>
+  );
 }

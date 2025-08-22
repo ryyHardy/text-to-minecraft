@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
 import styles from "./ConnectForm.module.css";
 
-type ConnectFormProps = {
-  onNavigateToSettings: () => void;
-};
-
-export default function ConnectForm({ onNavigateToSettings }: ConnectFormProps) {
+export default function ConnectForm() {
   const [status, setStatus] = useState<
     "disconnected" | "connecting" | "connected"
   >("disconnected");
@@ -65,84 +61,74 @@ export default function ConnectForm({ onNavigateToSettings }: ConnectFormProps) 
   }
 
   return (
-    <div className={styles.container}>
-      <form
-        className={styles.form}
-        onSubmit={handleSubmit}
-        key={status} // Forces a re-render every time the bot connects/disconnects
+    <form
+      className={styles.form}
+      onSubmit={handleSubmit}
+      key={status} // Forces a re-render every time the bot connects/disconnects
+    >
+      <h2>Connect Bot</h2>
+
+      {error && <div className={styles.error}>{error}</div>}
+
+      <label
+        className={styles.label}
+        htmlFor='username-input'
       >
-        <h2>Connect Bot</h2>
+        bot username
+      </label>
+      <input
+        className={styles.input}
+        required
+        placeholder='username'
+        type='text'
+        name='username-input'
+        defaultValue='TextMCBot'
+        spellCheck={false}
+      />
 
-        {error && <div className={styles.error}>{error}</div>}
+      <label
+        className={styles.label}
+        htmlFor='host-input'
+      >
+        hostname
+      </label>
+      <input
+        className={styles.input}
+        required
+        placeholder='hostname'
+        type='text'
+        name='host-input'
+        defaultValue='localhost'
+        disabled={status === "connecting"}
+      />
 
-        <label
-          className={styles.label}
-          htmlFor='username-input'
-        >
-          bot username
-        </label>
-        <input
-          className={styles.input}
-          required
-          placeholder='username'
-          type='text'
-          name='username-input'
-          defaultValue='TextMCBot'
-          spellCheck={false}
-        />
-
-        <label
-          className={styles.label}
-          htmlFor='host-input'
-        >
-          hostname
-        </label>
-        <input
-          className={styles.input}
-          required
-          placeholder='hostname'
-          type='text'
-          name='host-input'
-          defaultValue='localhost'
-          disabled={status === "connecting"}
-        />
-
-        <label
-          className={styles.label}
-          htmlFor='port-input'
-        >
-          port
-        </label>
-        <input
-          className={styles.input}
-          required
-          placeholder='port'
-          type='number'
-          name='port-input'
-          defaultValue='25565'
-          disabled={status === "connecting"}
-        />
-
-        <button
-          type='submit'
-          className={`${styles.button} ${status === "disconnected" ? styles.connectBtn : styles.disconnectBtn}`}
-          disabled={status === "connecting"}
-        >
-          {status === "connecting"
-            ? "Connecting..."
-            : status === "connected"
-              ? "Disconnect"
-              : "Connect"}
-        </button>
-      </form>
+      <label
+        className={styles.label}
+        htmlFor='port-input'
+      >
+        port
+      </label>
+      <input
+        className={styles.input}
+        required
+        placeholder='port'
+        type='number'
+        name='port-input'
+        defaultValue='25565'
+        disabled={status === "connecting"}
+      />
 
       <button
-        type="button"
-        className={styles.settingsButton}
-        onClick={onNavigateToSettings}
+        type='submit'
+        className={`${styles.button} ${status === "disconnected" ? styles.connectBtn : styles.disconnectBtn}`}
+        disabled={status === "connecting"}
       >
-        ⚙️ Settings
+        {status === "connecting"
+          ? "Connecting..."
+          : status === "connected"
+            ? "Disconnect"
+            : "Connect"}
       </button>
-    </div>
+    </form>
   );
 }
