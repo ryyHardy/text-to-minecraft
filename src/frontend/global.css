@@ -103,6 +103,7 @@ header {
   padding: var(--spacing-md) var(--spacing-xl);
   display: flex;
   justify-content: space-between;
+  gap: var(--spacing-md);
   align-items: center;
 }
 
@@ -113,6 +114,7 @@ main {
   align-items: center;
   justify-content: center;
   padding: var(--spacing-xl);
+  gap: var(--spacing-xl);
 }
 
 section {
