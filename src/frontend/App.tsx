@@ -1,6 +1,8 @@
 import { Routes, Route, HashRouter } from "react-router";
 
 import { SetupProvider, useSetup } from "./contexts/SetupContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
+
 import Setup from "./pages/Setup";
 import Dashboard from "./pages/Dashboard";
 import Settings from "./pages/Settings";
@@ -32,8 +34,10 @@ function AppContent() {
 
 export default function App() {
   return (
-    <SetupProvider>
-      <AppContent />
-    </SetupProvider>
+    <ThemeProvider>
+      <SetupProvider>
+        <AppContent />
+      </SetupProvider>
+    </ThemeProvider>
   );
 }

@@ -1,1 +1,49 @@
 @import "tailwindcss";
+
+/* Common Colors */
+@theme {
+}
+
+/* Light Theme Colors */
+@theme .light {
+  --color-bg-1: hsl(210, 100%, 40%);
+  --color-bg-2: hsl(210, 100%, 30%);
+
+  --color-bg-surface-1: hsla(0, 0%, 100%, 0.1);
+  --color-bg-surface-2: hsla(0, 0%, 100%, 0.2);
+
+  --color-bg-input-1: hsla(0, 0%, 100%, 0.1);
+  --color-bg-input-2: hsla(0, 0%, 100%, 0.15);
+
+  --color-text-1: white;
+  --color-text-2: hsla(0, 0%, 100%, 0.8);
+  --color-text-3: hsla(0, 0%, 100%, 0.5);
+
+  --color-border-1: hsla(0, 0%, 100%, 0.2);
+  --color-border-2: hsla(0, 0%, 100%, 0.1);
+
+  --color-accent-1: hsl(210, 100%, 60%);
+  --color-accent-2: hsl(210, 100%, 70%);
+}
+
+/* Dark Theme Colors */
+@theme .dark {
+  --color-bg-1: hsl(0, 35%, 15%);
+  --color-bg-2: hsl(0, 35%, 10%);
+
+  --color-bg-surface-1: hsla(0, 0%, 100%, 0.05);
+  --color-bg-surface-2: hsla(0, 0%, 100%, 0.1);
+
+  --color-bg-input-1: hsla(0, 0%, 100%, 0.05);
+  --color-bg-input-2: hsla(0, 0%, 100%, 0.1);
+
+  --color-text-1: white;
+  --color-text-2: hsla(0, 0%, 100%, 0.8);
+  --color-text-3: hsla(0, 0%, 100%, 0.5);
+
+  --color-border-1: hsla(0, 0%, 100%, 0.2);
+  --color-border-2: hsla(0, 0%, 100%, 0.1);
+
+  --color-accent-1: hsl(210, 100%, 60%);
+  --color-accent-2: hsl(210, 100%, 70%);
+}
