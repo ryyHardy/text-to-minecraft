@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Navigate } from "react-router";
-import styles from "./Settings.module.css";
 
 import { useSetup } from "../contexts/SetupContext";
 import GeminiForm from "../components/GeminiForm";
@@ -25,23 +24,21 @@ export default function Settings() {
   }
 
   return (
-    <>
-      <main className={styles.settings}>
-        <h1>Settings</h1>
+    <main>
+      <h1>Settings</h1>
+      <section>
+        <h2>API Configuration</h2>
+        <button onClick={handleApiKeyChange}>Change Gemini API Key</button>
+      </section>
+
+      {showApiKeyForm && (
         <section>
-          <h2>API Configuration</h2>
-          <button onClick={handleApiKeyChange}>Change Gemini API Key</button>
+          <h3>Update Gemini API Key</h3>
+          <GeminiForm onValidSubmit={handleApiKeySaved} />
         </section>
+      )}
 
-        {showApiKeyForm && (
-          <section>
-            <h3>Update Gemini API Key</h3>
-            <GeminiForm onValidSubmit={handleApiKeySaved} />
-          </section>
-        )}
-
-        <button onClick={() => setToDashboard(true)}>Back to Dashboard</button>
-      </main>
-    </>
+      <button onClick={() => setToDashboard(true)}>Back to Dashboard</button>
+    </main>
   );
 }

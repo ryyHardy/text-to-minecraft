@@ -1,5 +1,4 @@
 import { useState } from "react";
-import styles from "./GeminiForm.module.css";
 
 import { useSetup } from "../contexts/SetupContext";
 
@@ -49,11 +48,8 @@ export default function GeminiForm({
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className={styles.form}
-    >
-      <div className={styles.apiKeyNotice}>
+    <form onSubmit={handleSubmit}>
+      <div>
         The Minecraft bot is powered by Google's Gemini API, so you need to
         provide a Gemini API key below that will be used for the bot's AI
         features. You can get one for free (with a solid free tier) using{" "}
@@ -62,16 +58,10 @@ export default function GeminiForm({
         to keep it safe. So, ensure you have taken note of it before submitting.
       </div>
 
-      {error && <div className={styles.error}>{error}</div>}
+      {error && <div>{error}</div>}
 
-      <label
-        htmlFor='apikey-input'
-        className={styles.label}
-      >
-        Gemini API Key:
-      </label>
+      <label htmlFor='apikey-input'>Gemini API Key:</label>
       <input
-        className={styles.input}
         required
         type='password'
         name='apikey-input'
@@ -81,7 +71,6 @@ export default function GeminiForm({
       />
 
       <button
-        className={styles.button}
         type='submit'
         disabled={isSubmitting}
       >

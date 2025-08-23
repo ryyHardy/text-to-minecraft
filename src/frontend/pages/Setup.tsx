@@ -1,5 +1,4 @@
 import { useState } from "react";
-import styles from "./Setup.module.css";
 
 import { useSetup } from "../contexts/SetupContext";
 
@@ -44,18 +43,13 @@ export default function Setup() {
     <>
       <header>
         <h1>Setup</h1>
-        {error && (
-          <div className={`${styles.message} ${styles.error}`}>{error}</div>
-        )}
+        {error && <div>{error}</div>}
       </header>
       <main>
-        <form
-          className={styles.setup}
-          onSubmit={handleSubmit}
-        >
+        <form onSubmit={handleSubmit}>
           <section>
             <h2>API Key</h2>
-            <div className={styles.apiKeyNotice}>
+            <div>
               The Minecraft bot is powered by Google's Gemini API, so you need
               to provide a Gemini API key below that will be used for the bot's
               AI features. You can get one for free (with a solid free tier)

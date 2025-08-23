@@ -1,4 +1,3 @@
-import styles from "./Dashboard.module.css";
 import { useState } from "react";
 import { Navigate } from "react-router";
 
@@ -12,12 +11,10 @@ export default function Dashboard() {
   }
 
   return (
-    <>
-      <main className={styles.dashboard}>
-        <h1 className={styles.title}>Text-to-Minecraft</h1>
-        <ConnectForm />
-        <button onClick={() => setToSettings(true)}>Settings</button>
-      </main>
-    </>
+    <main>
+      <h1>Text-to-Minecraft</h1>
+      <ConnectForm />
+      <button onClick={() => setToSettings(true)}>Settings</button>
+    </main>
   );
 }

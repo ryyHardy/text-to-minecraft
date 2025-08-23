@@ -1,7 +1,5 @@
 import { Routes, Route, HashRouter } from "react-router";
 
-import styles from "./App.module.css";
-
 import { SetupProvider, useSetup } from "./contexts/SetupContext";
 import Setup from "./pages/Setup";
 import Dashboard from "./pages/Dashboard";
