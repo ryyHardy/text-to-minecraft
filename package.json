@@ -40,6 +40,7 @@
   "dependencies": {
     "@langchain/core": "^0.3.66",
     "@langchain/google-genai": "^0.2.16",
+    "@tailwindcss/vite": "^4.1.12",
     "dotenv": "17.2.1",
     "electron-squirrel-startup": "^1.0.1",
     "langchain": "^0.3.30",
@@ -49,6 +50,7 @@
     "react-dom": "^19.1.1",
     "react-router": "^7.8.1",
     "string-argv": "^0.3.2",
+    "tailwindcss": "^4.1.12",
     "ts-morph": "^26.0.0",
     "yargs": "^18.0.0"
   }
