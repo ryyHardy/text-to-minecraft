@@ -3,6 +3,13 @@
 
 /* Common Colors */
 @theme {
+  --color-error-1: hsl(0, 100%, 85%);
+  --color-error-2: hsl(0, 100%, 75%);
+  --color-error-text: hsl(0, 50%, 20%);
+
+  --color-success-1: hsl(120, 70%, 65%);
+  --color-success-2: hsl(120, 70%, 55%);
+  --color-success-text: hsl(120, 70%, 20%);
 }
 
 /* Light Theme Colors */
@@ -58,4 +65,124 @@ body {
     var(--color-bg-2) 100%
   );
   color: var(--color-text-1);
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 font-bold rounded transition-all duration-200;
+    background-color: var(--color-accent-1);
+    color: var(--color-text-1);
+  }
+  
+  .btn-primary:hover:not(:disabled) {
+    background-color: var(--color-accent-2);
+  }
+  
+  .btn-secondary {
+    @apply px-4 py-2 font-bold rounded transition-all duration-200;
+    background-color: var(--color-bg-surface-2);
+    color: var(--color-text-1);
+    border: 1px solid var(--color-border-1);
+  }
+  
+  .btn-secondary:hover:not(:disabled) {
+    background-color: var(--color-bg-surface-1);
+  }
+
+  .btn-danger {
+    @apply px-4 py-2 font-bold rounded transition-all duration-200;
+    background-color: hsl(0, 100%, 60%);
+    color: white;
+  }
+  
+  .btn-danger:hover:not(:disabled) {
+    background-color: hsl(0, 100%, 50%);
+  }
+  
+  .input-field {
+    @apply w-full px-3 py-2 rounded-md transition-all duration-200;
+    background-color: var(--color-bg-input-1);
+    border: 1px solid var(--color-border-1);
+    color: var(--color-text-1);
+  }
+  
+  .input-field:focus {
+    @apply outline-none ring-2;
+    background-color: var(--color-bg-input-2);
+    border-color: var(--color-accent-1);
+    box-shadow: 0 0 0 2px var(--color-accent-1);
+  }
+  
+  .input-field::placeholder {
+    color: var(--color-text-3);
+  }
+  
+  .form-container {
+    @apply max-w-md mx-auto space-y-6 p-6 rounded-lg;
+    background-color: var(--color-bg-surface-1);
+    border: 1px solid var(--color-border-1);
+  }
+
+  .page-container {
+    @apply min-h-screen p-6;
+  }
+
+  .page-header {
+    @apply text-center mb-8;
+  }
+
+  .page-title {
+    @apply text-4xl font-bold mb-2;
+    color: var(--color-text-1);
+  }
+
+  .section {
+    @apply space-y-4 p-6 rounded-lg mb-6;
+    background-color: var(--color-bg-surface-1);
+    border: 1px solid var(--color-border-1);
+  }
+
+  .section-title {
+    @apply text-xl font-bold mb-4;
+    color: var(--color-text-1);
+  }
+
+  .info-text {
+    @apply text-sm leading-relaxed;
+    color: var(--color-text-2);
+  }
+
+  .info-text a {
+    color: var(--color-accent-1);
+    text-decoration: underline;
+  }
+
+  .info-text a:hover {
+    color: var(--color-accent-2);
+  }
+  
+  .error-message {
+    @apply rounded-md p-3;
+    background-color: hsl(0, 100%, 85%);
+    color: hsl(0, 50%, 20%);
+    border: 1px solid hsl(0, 100%, 75%);
+  }
+  
+  .success-message {
+    @apply rounded-md p-3;
+    background-color: hsl(120, 70%, 65%);
+    color: hsl(120, 50%, 20%);
+    border: 1px solid hsl(120, 70%, 55%);
+  }
+
+  .nav-button {
+    @apply px-4 py-2 rounded transition-all duration-200;
+    background-color: var(--color-bg-surface-2);
+    color: var(--color-text-1);
+    border: 1px solid var(--color-border-1);
+  }
+
+  .nav-button:hover {
+    background-color: var(--color-bg-surface-1);
+  }
 }

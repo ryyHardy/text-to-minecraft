@@ -62,44 +62,72 @@ export default function ConnectForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      key={status} // Forces a re-render every time the bot connects/disconnects
+      className='form-container p-5'
+      key={status} // Prevent user from entering things while connecting
     >
-      <h2>Connect Bot</h2>
+      <h2 className='text-2xl font-bold text-center'>Connect Bot</h2>
 
-      {error && <div>{error}</div>}
+      {error && <div className='error-message'>{error}</div>}
 
-      <label htmlFor='username-input'>Bot Username</label>
-      <input
-        required
-        placeholder='username'
-        type='text'
-        name='username-input'
-        defaultValue='TextMCBot'
-        spellCheck={false}
-      />
+      <div className='space-y-4'>
+        <div>
+          <label
+            htmlFor='username-input'
+            className='block text-sm font-medium uppercase tracking-wide'
+          >
+            Bot Username
+          </label>
+          <input
+            className='input-field mt-1'
+            required
+            placeholder='username'
+            type='text'
+            name='username-input'
+            defaultValue='TextMCBot'
+            spellCheck={false}
+          />
+        </div>
 
-      <label htmlFor='host-input'>hostname</label>
-      <input
-        required
-        placeholder='hostname'
-        type='text'
-        name='host-input'
-        defaultValue='localhost'
-        disabled={status === "connecting"}
-      />
+        <div>
+          <label
+            htmlFor='host-input'
+            className='block text-sm font-medium uppercase tracking-wide'
+          >
+            Hostname
+          </label>
+          <input
+            className='input-field mt-1'
+            required
+            placeholder='hostname'
+            type='text'
+            name='host-input'
+            defaultValue='localhost'
+            disabled={status === "connecting"}
+          />
+        </div>
 
-      <label htmlFor='port-input'>port</label>
-      <input
-        required
-        placeholder='port'
-        type='number'
-        name='port-input'
-        defaultValue='25565'
-        disabled={status === "connecting"}
-      />
+        <div>
+          <label
+            htmlFor='port-input'
+            className='block text-sm font-medium uppercase tracking-wide'
+          >
+            Port
+          </label>
+          <input
+            className='input-field mt-1'
+            required
+            placeholder='port'
+            type='number'
+            name='port-input'
+            defaultValue='25565'
+            disabled={status === "connecting"}
+          />
+        </div>
+      </div>
 
       <button
         type='submit'
+        className={`w-full ${status === "connected" ? "btn-secondary" : "btn-primary"}`}
         disabled={status === "connecting"}
       >
         {status === "connecting"

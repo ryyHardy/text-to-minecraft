@@ -11,10 +11,21 @@ export default function Dashboard() {
   }
 
   return (
-    <main>
-      <h1>Text-to-Minecraft</h1>
-      <ConnectForm />
-      <button onClick={() => setToSettings(true)}>Settings</button>
-    </main>
+    <div className='page-container'>
+      <header className='page-header'>
+        <h1 className='page-title'>Text-to-Minecraft</h1>
+      </header>
+
+      <main className='flex flex-col items-center space-y-6'>
+        <ConnectForm />
+
+        <button
+          onClick={() => setToSettings(true)}
+          className='nav-button'
+        >
+          ⚙️ Settings
+        </button>
+      </main>
+    </div>
   );
 }

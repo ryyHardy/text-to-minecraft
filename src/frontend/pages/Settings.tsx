@@ -24,21 +24,38 @@ export default function Settings() {
   }
 
   return (
-    <main>
-      <h1>Settings</h1>
-      <section>
-        <h2>API Configuration</h2>
-        <button onClick={handleApiKeyChange}>Change Gemini API Key</button>
-      </section>
-
-      {showApiKeyForm && (
-        <section>
-          <h3>Update Gemini API Key</h3>
-          <GeminiForm onValidSubmit={handleApiKeySaved} />
+    <div className="page-container">
+      <header className="page-header">
+        <h1 className="page-title">Settings</h1>
+      </header>
+      
+      <main className="max-w-2xl mx-auto space-y-6">
+        <section className="section">
+          <h2 className="section-title">API Configuration</h2>
+          <button 
+            onClick={handleApiKeyChange}
+            className="btn-secondary"
+          >
+            Change Gemini API Key
+          </button>
         </section>
-      )}
 
-      <button onClick={() => setToDashboard(true)}>Back to Dashboard</button>
-    </main>
+        {showApiKeyForm && (
+          <section className="section">
+            <h3 className="section-title">Update Gemini API Key</h3>
+            <GeminiForm onValidSubmit={handleApiKeySaved} isSetup={false} />
+          </section>
+        )}
+
+        <div className="flex justify-center">
+          <button 
+            onClick={() => setToDashboard(true)}
+            className="nav-button"
+          >
+            ← Back to Dashboard
+          </button>
+        </div>
+      </main>
+    </div>
   );
 }
