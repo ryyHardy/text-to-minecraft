@@ -13,7 +13,7 @@
 }
 
 /* Light Theme Colors */
-@theme .light {
+.light {
   --color-bg-1: hsl(210, 100%, 40%);
   --color-bg-2: hsl(210, 100%, 30%);
 
@@ -35,7 +35,7 @@
 }
 
 /* Dark Theme Colors */
-@theme .dark {
+.dark {
   --color-bg-1: hsl(0, 35%, 15%);
   --color-bg-2: hsl(0, 35%, 10%);
 
@@ -73,18 +73,18 @@ body {
     background-color: var(--color-accent-1);
     color: var(--color-text-1);
   }
-  
+
   .btn-primary:hover:not(:disabled) {
     background-color: var(--color-accent-2);
   }
-  
+
   .btn-secondary {
     @apply px-4 py-2 font-bold rounded transition-all duration-200;
     background-color: var(--color-bg-surface-2);
     color: var(--color-text-1);
     border: 1px solid var(--color-border-1);
   }
-  
+
   .btn-secondary:hover:not(:disabled) {
     background-color: var(--color-bg-surface-1);
   }
@@ -94,29 +94,29 @@ body {
     background-color: hsl(0, 100%, 60%);
     color: white;
   }
-  
+
   .btn-danger:hover:not(:disabled) {
     background-color: hsl(0, 100%, 50%);
   }
-  
+
   .input-field {
     @apply w-full px-3 py-2 rounded-md transition-all duration-200;
     background-color: var(--color-bg-input-1);
     border: 1px solid var(--color-border-1);
     color: var(--color-text-1);
   }
-  
+
   .input-field:focus {
     @apply outline-none ring-2;
     background-color: var(--color-bg-input-2);
     border-color: var(--color-accent-1);
     box-shadow: 0 0 0 2px var(--color-accent-1);
   }
-  
+
   .input-field::placeholder {
     color: var(--color-text-3);
   }
-  
+
   .form-container {
     @apply max-w-md mx-auto space-y-6 p-6 rounded-lg;
     background-color: var(--color-bg-surface-1);
@@ -160,14 +160,14 @@ body {
   .info-text a:hover {
     color: var(--color-accent-2);
   }
-  
+
   .error-message {
     @apply rounded-md p-3;
     background-color: hsl(0, 100%, 85%);
     color: hsl(0, 50%, 20%);
     border: 1px solid hsl(0, 100%, 75%);
   }
-  
+
   .success-message {
     @apply rounded-md p-3;
     background-color: hsl(120, 70%, 65%);
