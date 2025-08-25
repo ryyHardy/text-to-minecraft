@@ -34,13 +34,8 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>("system");
   const systemTheme = useSystemTheme();
-  const [theme, setTheme] = useState<Theme>("system");
-  const systemTheme = useSystemTheme();
 
   useEffect(() => {
-    const resolvedTheme = theme === "system" ? systemTheme : theme;
-    document.documentElement.setAttribute("data-theme", resolvedTheme);
-  }, [theme, systemTheme]);
     const resolvedTheme = theme === "system" ? systemTheme : theme;
     document.documentElement.setAttribute("data-theme", resolvedTheme);
   }, [theme, systemTheme]);
