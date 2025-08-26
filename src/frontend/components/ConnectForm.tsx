@@ -1,10 +1,16 @@
 import { useEffect, useState } from "react";
+import Form from "./ui/Form";
+import Input from "./ui/Input";
+import Button from "./ui/Button";
 
 export default function ConnectForm() {
-  const [status, setStatus] = useState<
-    "disconnected" | "connecting" | "connected"
-  >("disconnected");
+  const [status, setStatus] = useState<"disconnected" | "connecting" | "connected">("disconnected");
   const [error, setError] = useState<string | null>(null);
+  const [formData, setFormData] = useState({
+    host: "localhost",
+    port: "25565",
+    username: "TextMCBot"
+  });
 
   useEffect(() => {
     // Listen for disconnection events
@@ -60,82 +66,52 @@ export default function ConnectForm() {
   }
 
   return (
-    <form
+    <Form
+      title="Connect Bot"
+      error={error}
       onSubmit={handleSubmit}
-      className='form-container p-5'
-      key={status} // Prevent user from entering things while connecting
+      className="p-5"
     >
-      <h2 className='text-2xl font-bold text-center'>Connect Bot</h2>
+      <Input
+        label="Bot Username"
+        name="username-input"
+        value={formData.username}
+        onChange={(e) => setFormData(prev => ({ ...prev, username: e.target.value }))}
+        placeholder="username"
+        spellCheck={false}
+        required
+      />
 
-      {error && <div className='error-message'>{error}</div>}
-
-      <div className='space-y-4'>
-        <div>
-          <label
-            htmlFor='username-input'
-            className='block text-sm font-medium uppercase tracking-wide'
-          >
-            Bot Username
-          </label>
-          <input
-            className='input-field mt-1'
-            required
-            placeholder='username'
-            type='text'
-            name='username-input'
-            defaultValue='TextMCBot'
-            spellCheck={false}
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor='host-input'
-            className='block text-sm font-medium uppercase tracking-wide'
-          >
-            Hostname
-          </label>
-          <input
-            className='input-field mt-1'
-            required
-            placeholder='hostname'
-            type='text'
-            name='host-input'
-            defaultValue='localhost'
-            disabled={status === "connecting"}
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor='port-input'
-            className='block text-sm font-medium uppercase tracking-wide'
-          >
-            Port
-          </label>
-          <input
-            className='input-field mt-1'
-            required
-            placeholder='port'
-            type='number'
-            name='port-input'
-            defaultValue='25565'
-            disabled={status === "connecting"}
-          />
-        </div>
-      </div>
-
-      <button
-        type='submit'
-        className={`w-full ${status === "connected" ? "btn-secondary" : "btn-primary"}`}
+      <Input
+        label="Hostname"
+        name="host-input"
+        value={formData.host}
+        onChange={(e) => setFormData(prev => ({ ...prev, host: e.target.value }))}
+        placeholder="hostname"
         disabled={status === "connecting"}
+        required
+      />
+
+      <Input
+        label="Port"
+        name="port-input"
+        type="number"
+        value={formData.port}
+        onChange={(e) => setFormData(prev => ({ ...prev, port: e.target.value }))}
+        placeholder="port"
+        helperText="Port must be between 1 and 65535"
+        disabled={status === "connecting"}
+        required
+      />
+
+      <Button
+        type="submit"
+        className="w-full"
+        disabled={status === "connecting"}
+        loading={status === "connecting"}
       >
-        {status === "connecting"
-          ? "Connecting..."
-          : status === "connected"
-            ? "Disconnect"
-            : "Connect"}
-      </button>
-    </form>
+        {status === "connected" ? "Disconnect" : "Connect"}
+      </Button>
+    </Form>
   );
 }

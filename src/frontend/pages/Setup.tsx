@@ -40,17 +40,17 @@ export default function Setup() {
   }
 
   return (
-    <div className="page-container">
-      <header className="page-header">
-        <h1 className="page-title">Setup</h1>
-        {error && <div className="error-message">{error}</div>}
+    <div>
+      <header>
+        <h1>Setup</h1>
+        {error && <div>{error}</div>}
       </header>
-      
+
       <main>
-        <form onSubmit={handleSubmit} className="form-container">
-          <section className="space-y-4">
-            <h2 className="section-title">API Key</h2>
-            <div className="info-text">
+        <form onSubmit={handleSubmit}>
+          <section className='space-y-4'>
+            <h2>API Key</h2>
+            <div>
               The Minecraft bot is powered by Google's Gemini API, so you need
               to provide a Gemini API key below that will be used for the bot's
               AI features. You can get one for free (with a solid free tier)
@@ -59,13 +59,16 @@ export default function Setup() {
               your machine to keep it safe. So, ensure you have taken note of it
               before submitting.
             </div>
-            
+
             <div>
-              <label htmlFor='geminikey-input' className="block text-sm font-medium uppercase tracking-wide">
+              <label
+                htmlFor='geminikey-input'
+                className='block text-sm font-medium uppercase tracking-wide'
+              >
                 Gemini API Key
               </label>
               <input
-                className="input-field mt-1"
+                className='mt-1'
                 required
                 type='password'
                 name='geminikey-input'
@@ -78,7 +81,7 @@ export default function Setup() {
 
           <button
             type='submit'
-            className="btn-primary w-full"
+            className='w-full'
             disabled={isSubmitting}
           >
             {isSubmitting ? "Validating..." : "Submit"}

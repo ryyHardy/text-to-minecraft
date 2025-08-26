@@ -1,5 +1,7 @@
 import { useState } from "react";
-
+import Form from "./ui/Form";
+import Input from "./ui/Input";
+import Button from "./ui/Button";
 import { useSetup } from "../contexts/SetupContext";
 
 type GeminiFormProps = {
@@ -48,48 +50,41 @@ export default function GeminiForm({
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className='form-container'
-    >
-      <div className='info-text'>
+    <Form onSubmit={handleSubmit}>
+      <div className="text-text-2 leading-relaxed">
         The Minecraft bot is powered by Google's Gemini API, so you need to
         provide a Gemini API key below that will be used for the bot's AI
         features. You can get one for free (with a solid free tier) using{" "}
-        <a href='https://aistudio.google.com/'>Google AI Studio</a>. When
-        submitted, the key is validated, encrypted, and stored on your machine
-        to keep it safe. So, ensure you have taken note of it before submitting.
+        <a 
+          href="https://aistudio.google.com/" 
+          className="text-accent-1 hover:text-accent-2 underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Google AI Studio
+        </a>
+        . When submitted, the key is validated, encrypted, and stored on your 
+        machine to keep it safe. So, ensure you have taken note of it before submitting.
       </div>
 
-      {error && <div className='error-message'>{error}</div>}
-
-      <div className='space-y-4'>
-        <div>
-          <label
-            htmlFor='apikey-input'
-            className='block text-sm font-medium uppercase tracking-wide'
-          >
-            Gemini API Key
-          </label>
-          <input
-            className='input-field mt-1'
-            required
-            type='password'
-            name='apikey-input'
-            placeholder='Paste Gemini API Key Here'
-            spellCheck={false}
-            disabled={isSubmitting}
-          />
-        </div>
-      </div>
-
-      <button
-        type='submit'
-        className='btn-primary w-full'
+      <Input
+        label="Gemini API Key"
+        name="apikey-input"
+        type="password"
+        placeholder="Paste Gemini API Key Here"
+        spellCheck={false}
         disabled={isSubmitting}
+        required
+      />
+
+      <Button
+        type="submit"
+        className="w-full"
+        disabled={isSubmitting}
+        loading={isSubmitting}
       >
         {isSubmitting ? "Validating..." : "Submit"}
-      </button>
-    </form>
+      </Button>
+    </Form>
   );
 }
