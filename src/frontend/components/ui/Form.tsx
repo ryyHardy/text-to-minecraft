@@ -34,7 +34,7 @@ export default function Form({
       )}
 
       {error && (
-        <div className='p-3 rounded-md bg-error-1 border border-error-2'>
+        <div className='p-3 rounded-md bg-error-1 border border-error-2 font-bold'>
           <p className='text-sm text-error-text'>{error}</p>
         </div>
       )}

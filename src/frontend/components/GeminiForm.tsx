@@ -50,36 +50,38 @@ export default function GeminiForm({
   }
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <div className="text-text-2 leading-relaxed">
+    <Form onSubmit={handleSubmit} error={error}>
+      <div className='text-text-2 leading-relaxed'>
         The Minecraft bot is powered by Google's Gemini API, so you need to
         provide a Gemini API key below that will be used for the bot's AI
         features. You can get one for free (with a solid free tier) using{" "}
-        <a 
-          href="https://aistudio.google.com/" 
-          className="text-accent-1 hover:text-accent-2 underline"
-          target="_blank"
-          rel="noopener noreferrer"
+        <a
+          href='https://aistudio.google.com/'
+          className='text-accent-1 hover:text-accent-2 underline'
+          target='_blank'
+          rel='noopener noreferrer'
         >
           Google AI Studio
         </a>
-        . When submitted, the key is validated, encrypted, and stored on your 
-        machine to keep it safe. So, ensure you have taken note of it before submitting.
+        . When submitted, the key is validated, encrypted, and stored on your
+        machine to keep it safe. So, ensure you have taken note of it before
+        submitting.
       </div>
 
       <Input
-        label="Gemini API Key"
-        name="apikey-input"
-        type="password"
-        placeholder="Paste Gemini API Key Here"
+        label='Gemini API Key'
+        name='apikey-input'
+        type='password'
+        placeholder='Paste Gemini API Key Here'
         spellCheck={false}
         disabled={isSubmitting}
         required
+        revealToggle
       />
 
       <Button
-        type="submit"
-        className="w-full"
+        type='submit'
+        className='w-full'
         disabled={isSubmitting}
         loading={isSubmitting}
       >

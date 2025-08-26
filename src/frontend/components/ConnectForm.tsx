@@ -4,12 +4,14 @@ import Input from "./ui/Input";
 import Button from "./ui/Button";
 
 export default function ConnectForm() {
-  const [status, setStatus] = useState<"disconnected" | "connecting" | "connected">("disconnected");
+  const [status, setStatus] = useState<
+    "disconnected" | "connecting" | "connected"
+  >("disconnected");
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     host: "localhost",
     port: "25565",
-    username: "TextMCBot"
+    username: "TextMCBot",
   });
 
   useEffect(() => {
@@ -67,46 +69,50 @@ export default function ConnectForm() {
 
   return (
     <Form
-      title="Connect Bot"
+      title='Connect Bot'
       error={error}
       onSubmit={handleSubmit}
-      className="p-5"
+      className='p-5 w-xl'
     >
       <Input
-        label="Bot Username"
-        name="username-input"
+        label='Bot Username'
+        name='username-input'
         value={formData.username}
-        onChange={(e) => setFormData(prev => ({ ...prev, username: e.target.value }))}
-        placeholder="username"
+        onChange={e =>
+          setFormData(prev => ({ ...prev, username: e.target.value }))
+        }
+        placeholder='username'
         spellCheck={false}
         required
       />
 
       <Input
-        label="Hostname"
-        name="host-input"
+        label='Hostname'
+        name='host-input'
         value={formData.host}
-        onChange={(e) => setFormData(prev => ({ ...prev, host: e.target.value }))}
-        placeholder="hostname"
+        onChange={e => setFormData(prev => ({ ...prev, host: e.target.value }))}
+        placeholder='hostname'
         disabled={status === "connecting"}
         required
       />
 
       <Input
-        label="Port"
-        name="port-input"
-        type="number"
+        label='Port'
+        name='port-input'
+        type='number'
+        min={1}
+        max={65535}
         value={formData.port}
-        onChange={(e) => setFormData(prev => ({ ...prev, port: e.target.value }))}
-        placeholder="port"
-        helperText="Port must be between 1 and 65535"
+        onChange={e => setFormData(prev => ({ ...prev, port: e.target.value }))}
+        placeholder='port'
+        helperText='Port must be between 1 and 65535'
         disabled={status === "connecting"}
         required
       />
 
       <Button
-        type="submit"
-        className="w-full"
+        type='submit'
+        className='w-full'
         disabled={status === "connecting"}
         loading={status === "connecting"}
       >
