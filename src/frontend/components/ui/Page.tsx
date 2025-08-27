@@ -4,13 +4,13 @@ type PageProps = {
   title: string;
   navItems?: { name: string; route: string }[];
   children: React.ReactNode;
-  className?: string;
+  contentClassName?: string;
 };
 
 export default function Page({
   title = "",
   navItems = [],
-  className = "",
+  contentClassName = "",
   children,
 }: PageProps) {
   const navigate = useNavigate();
@@ -26,7 +26,7 @@ export default function Page({
               <button
                 key={route}
                 onClick={() => navigate(route)}
-                className='p-3 text-xl bg-bg-surface-1 rounded-xl border-3 border-border-1 transition-all duration-100 active:-translate-y-1 active:bg-bg-surface-2 active:shadow-md active:shadow-green-500'
+                className='p-3 text-xl bg-bg-surface-1 rounded-xl border-3 border-border-1 transition-all duration-200 active:bg-bg-surface-2 active:shadow-md'
               >
                 {name}
               </button>
@@ -34,7 +34,7 @@ export default function Page({
           })}
         </nav>
       </header>
-      <main className={className}>{children}</main>
+      <main className={contentClassName}>{children}</main>
     </>
   );
 }

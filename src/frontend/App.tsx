@@ -14,21 +14,28 @@ function AppContent() {
     return <h1>Loading...</h1>;
   }
 
-  return isSetupComplete ? (
+  return (
     <HashRouter>
       <Routes>
-        <Route
-          index
-          element={<Dashboard />}
-        />
-        <Route
-          path='settings'
-          element={<Settings />}
-        />
+        {isSetupComplete ? (
+          <>
+            <Route
+              index
+              element={<Dashboard />}
+            />
+            <Route
+              path='settings'
+              element={<Settings />}
+            />
+          </>
+        ) : (
+          <Route
+            index
+            element={<Setup />}
+          />
+        )}
       </Routes>
     </HashRouter>
-  ) : (
-    <Setup />
   );
 }
 

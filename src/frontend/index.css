@@ -26,6 +26,7 @@
   --color-text-1: var(--text-1);
   --color-text-2: var(--text-2);
   --color-text-3: var(--text-3);
+  --color-text-link: var(--text-link);
 
   --color-border-1: var(--border-1);
   --color-border-2: var(--border-2);
@@ -48,6 +49,7 @@
   --text-1: white;
   --text-2: hsla(0, 0%, 100%, 0.8);
   --text-3: hsla(0, 0%, 100%, 0.5);
+  --text-link: hsl(200, 100%, 60%);
 
   --border-1: hsla(0, 0%, 100%, 0.2);
   --border-2: hsla(0, 0%, 100%, 0.1);
@@ -70,6 +72,7 @@
   --text-1: white;
   --text-2: hsla(0, 0%, 100%, 0.8);
   --text-3: hsla(0, 0%, 100%, 0.5);
+  --text-link: hsl(120, 95%, 60%);
 
   --border-1: hsla(0, 0%, 100%, 0.2);
   --border-2: hsla(0, 0%, 100%, 0.1);

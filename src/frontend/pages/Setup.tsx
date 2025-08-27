@@ -1,23 +1,18 @@
-import { useState } from "react";
-
-import { useSetup } from "../contexts/SetupContext";
 import GeminiForm from "../components/GeminiForm";
+import Page from "../components/ui/Page";
 
 export default function Setup() {
   return (
-    <main className='min-h-screen flex items-center justify-center p-6 bg-bg-surface-1'>
-      <section className='w-full max-w-xl space-y-6'>
-        <header className='space-y-2 text-center'>
-          <h1 className='text-3xl font-bold text-text-1'>Setup</h1>
-          <p className='text-text-2'>
-            Enter your Gemini API key to get started.
-          </p>
-        </header>
-
-        <div className='p-5 rounded-xl border border-border-1 bg-bg-surface-2'>
-          <GeminiForm />
-        </div>
+    <Page
+      title='Welcome!'
+      contentClassName='flex gap-10 pt-10 flex-col justify-center items-center'
+    >
+      <h2 className='text-xl font-bold text-text-2'>
+        Enter your Gemini API key to get started.
+      </h2>
+      <section className='p-5 max-w-2xl rounded-xl border border-border-1 bg-bg-surface-1'>
+        <GeminiForm />
       </section>
-    </main>
+    </Page>
   );
 }
