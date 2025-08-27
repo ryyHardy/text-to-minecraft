@@ -1,11 +1,18 @@
 import { useEffect, useState } from "react";
-import styles from "./ConnectForm.module.css";
+import Form from "./ui/Form";
+import Input from "./ui/Input";
+import Button from "./ui/Button";
 
 export default function ConnectForm() {
   const [status, setStatus] = useState<
     "disconnected" | "connecting" | "connected"
   >("disconnected");
   const [error, setError] = useState<string | null>(null);
+  const [formData, setFormData] = useState({
+    host: "localhost",
+    port: "25565",
+    username: "TextMCBot",
+  });
 
   useEffect(() => {
     // Listen for disconnection events
@@ -61,74 +68,56 @@ export default function ConnectForm() {
   }
 
   return (
-    <form
-      className={styles.form}
+    <Form
+      title='Connect Bot'
+      error={error}
       onSubmit={handleSubmit}
-      key={status} // Forces a re-render every time the bot connects/disconnects
+      className='p-5 w-xl'
     >
-      <h2>Connect Bot</h2>
-
-      {error && <div className={styles.error}>{error}</div>}
-
-      <label
-        className={styles.label}
-        htmlFor='username-input'
-      >
-        bot username
-      </label>
-      <input
-        className={styles.input}
-        required
-        placeholder='username'
-        type='text'
+      <Input
+        label='Bot Username'
         name='username-input'
-        defaultValue='TextMCBot'
+        value={formData.username}
+        onChange={e =>
+          setFormData(prev => ({ ...prev, username: e.target.value }))
+        }
+        placeholder='username'
         spellCheck={false}
+        required
       />
 
-      <label
-        className={styles.label}
-        htmlFor='host-input'
-      >
-        hostname
-      </label>
-      <input
-        className={styles.input}
-        required
-        placeholder='hostname'
-        type='text'
+      <Input
+        label='Hostname'
         name='host-input'
-        defaultValue='localhost'
+        value={formData.host}
+        onChange={e => setFormData(prev => ({ ...prev, host: e.target.value }))}
+        placeholder='hostname'
         disabled={status === "connecting"}
-      />
-
-      <label
-        className={styles.label}
-        htmlFor='port-input'
-      >
-        port
-      </label>
-      <input
-        className={styles.input}
         required
-        placeholder='port'
-        type='number'
-        name='port-input'
-        defaultValue='25565'
-        disabled={status === "connecting"}
       />
 
-      <button
-        type='submit'
-        className={`${styles.button} ${status === "disconnected" ? styles.connectBtn : styles.disconnectBtn}`}
+      <Input
+        label='Port'
+        name='port-input'
+        type='number'
+        min={1}
+        max={65535}
+        value={formData.port}
+        onChange={e => setFormData(prev => ({ ...prev, port: e.target.value }))}
+        placeholder='port'
+        helperText='Port must be between 1 and 65535'
         disabled={status === "connecting"}
+        required
+      />
+
+      <Button
+        type='submit'
+        className='w-full'
+        disabled={status === "connecting"}
+        loading={status === "connecting"}
       >
-        {status === "connecting"
-          ? "Connecting..."
-          : status === "connected"
-            ? "Disconnect"
-            : "Connect"}
-      </button>
-    </form>
+        {status === "connected" ? "Disconnect" : "Connect"}
+      </Button>
+    </Form>
   );
 }

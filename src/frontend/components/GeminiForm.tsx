@@ -1,6 +1,7 @@
 import { useState } from "react";
-import styles from "./GeminiForm.module.css";
-
+import Form from "./ui/Form";
+import Input from "./ui/Input";
+import Button from "./ui/Button";
 import { useSetup } from "../contexts/SetupContext";
 
 type GeminiFormProps = {
@@ -49,44 +50,46 @@ export default function GeminiForm({
   }
 
   return (
-    <form
+    <Form
       onSubmit={handleSubmit}
-      className={styles.form}
+      error={error}
     >
-      <div className={styles.apiKeyNotice}>
+      <div className='text-text-2 leading-relaxed'>
         The Minecraft bot is powered by Google's Gemini API, so you need to
         provide a Gemini API key below that will be used for the bot's AI
         features. You can get one for free (with a solid free tier) using{" "}
-        <a href='https://aistudio.google.com/'>Google AI Studio</a>. When
-        submitted, the key is validated, encrypted, and stored on your machine
-        to keep it safe. So, ensure you have taken note of it before submitting.
+        <a
+          href='https://aistudio.google.com/'
+          className='text-text-link underline-offset-2 hover:text-accent-2 underline'
+          target='_blank'
+          rel='noopener noreferrer'
+        >
+          Google AI Studio
+        </a>
+        . When submitted, the key is validated, encrypted, and stored on your
+        machine to keep it safe. So, ensure you have taken note of it before
+        submitting.
       </div>
 
-      {error && <div className={styles.error}>{error}</div>}
-
-      <label
-        htmlFor='apikey-input'
-        className={styles.label}
-      >
-        Gemini API Key:
-      </label>
-      <input
-        className={styles.input}
-        required
-        type='password'
+      <Input
+        label='Gemini API Key'
         name='apikey-input'
+        type='password'
         placeholder='Paste Gemini API Key Here'
         spellCheck={false}
         disabled={isSubmitting}
+        required
+        revealToggle
       />
 
-      <button
-        className={styles.button}
+      <Button
         type='submit'
+        className='w-full'
         disabled={isSubmitting}
+        loading={isSubmitting}
       >
         {isSubmitting ? "Validating..." : "Submit"}
-      </button>
-    </form>
+      </Button>
+    </Form>
   );
 }

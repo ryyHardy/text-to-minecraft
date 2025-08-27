@@ -1,8 +1,8 @@
 import { Routes, Route, HashRouter } from "react-router";
 
-import styles from "./App.module.css";
-
 import { SetupProvider, useSetup } from "./contexts/SetupContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
+
 import Setup from "./pages/Setup";
 import Dashboard from "./pages/Dashboard";
 import Settings from "./pages/Settings";
@@ -14,28 +14,37 @@ function AppContent() {
     return <h1>Loading...</h1>;
   }
 
-  return isSetupComplete ? (
+  return (
     <HashRouter>
       <Routes>
-        <Route
-          index
-          element={<Dashboard />}
-        />
-        <Route
-          path='settings'
-          element={<Settings />}
-        />
+        {isSetupComplete ? (
+          <>
+            <Route
+              index
+              element={<Dashboard />}
+            />
+            <Route
+              path='settings'
+              element={<Settings />}
+            />
+          </>
+        ) : (
+          <Route
+            index
+            element={<Setup />}
+          />
+        )}
       </Routes>
     </HashRouter>
-  ) : (
-    <Setup />
   );
 }
 
 export default function App() {
   return (
-    <SetupProvider>
-      <AppContent />
-    </SetupProvider>
+    <ThemeProvider>
+      <SetupProvider>
+        <AppContent />
+      </SetupProvider>
+    </ThemeProvider>
   );
 }
