@@ -76,7 +76,6 @@ Players can issue commands to the bot through Minecraft's chat window by pressin
 - Adding more bot configuration in the UI, including a "whitelist" for players allowed to command the bot.
 - Find a way to allow users to switch LLM models to give them more usage, but at a lower quality.
 - Eventually finding a way to have multiple bots (that would be fun).
-- Consider using (and learning) Tailwind for styling. The CSS is really unwieldly right now.
 - The bot has little to no awareness of its surroundings which is dangerous on more populated worlds.
 - Potentially making a version of the bot that is more friendly for survival mode.
 - Make a release!
