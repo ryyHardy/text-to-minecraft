@@ -1,5 +1,6 @@
 import ConnectForm from "../components/ConnectForm";
 import Page from "../components/ui/Page";
+import ActivityLog from "../components/ActivityLog";
 
 export default function Dashboard() {
   return (
@@ -9,6 +10,7 @@ export default function Dashboard() {
       contentClassName='grid place-content-center'
     >
       <ConnectForm />
+      <ActivityLog />
     </Page>
   );
 }

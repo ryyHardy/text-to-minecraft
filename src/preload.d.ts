@@ -24,6 +24,8 @@ export interface TextMCAPI {
   onBotDisconnected: (
     callback: (username: string, reason: string) => void
   ) => void;
+
+  onLogEvent: (callback: (event: any) => void) => void;
 }
 
 declare global {

@@ -1,7 +1,4 @@
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
-import { Project } from "ts-morph";
-import path from "path";
-
 import { getSecret } from "../config/secrets";
 
 export async function validateLLMKey(key: string) {
@@ -21,16 +18,18 @@ export async function validateLLMKey(key: string) {
   }
 }
 
-function getBotInterfaceString() {
-  const project = new Project();
-  const apiFileAbsolutePath = path.resolve(
-    process.cwd(),
-    "src/backend/ai/api.ts"
-  );
-  const apiMorph = project.addSourceFileAtPath(apiFileAbsolutePath);
-  const face = apiMorph.getInterface("BotInterface");
-  return face.getFullText();
-}
+// Hardcoded interface string extracted from api.ts
+const BOT_INTERFACE_STRING = `interface BotInterface {
+  /**
+   * Place a block at (x,y,z) relative to the bot
+   *
+   * @param x x-coordinate of the block relative to the bot
+   * @param y y-coordinate of the block relative to the bot
+   * @param z z-coordinate of the block relative to the bot
+   * @param block The block (in [block-state format](https://minecraft.wiki/w/Argument_types#block_state)) to place (ex: *cobblestone*, *oak_stairs[facing=east,waterlogged=true]*)
+   */
+  placeBlock: (x: number, y: number, z: number, block: string) => void;
+}`;
 
 const SYSTEM_PROMPT = `
 You are an expert AI Minecraft build assistant. You generate runnable JavaScript code to build structures in Minecraft
@@ -38,7 +37,7 @@ using ONLY the provided API (accessible through the \`botAPI\` global object). Y
 without markdown or comments.
 
 API available:
-${getBotInterfaceString().trim()}
+${BOT_INTERFACE_STRING.trim()}
 
 Rules:
 - Only call the functions listed in the API.

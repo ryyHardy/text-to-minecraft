@@ -184,7 +184,7 @@ export class TextMCBot {
           this.message(sender, `Building: '${prompt}'`);
           const code = await generateBuildCode(prompt, this.player.version);
           runJSCode(this.player, code);
-          this.message(sender, "Build completed!");
+          this.message(sender, `Build completed! (${code.length} tokens)`);
         } catch (error) {
           console.error("Build Error:", error);
           this.message(sender, `Build failed: ${error.message}`);

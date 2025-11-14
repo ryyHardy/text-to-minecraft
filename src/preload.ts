@@ -58,4 +58,8 @@ contextBridge.exposeInMainWorld("textmc", {
       callback(username, reason);
     });
   },
+
+  onLogEvent: (callback: (event: any) => void) => {
+    ipcRenderer.on("log-event", (_, e) => callback(e));
+  },
 });

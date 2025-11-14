@@ -5,10 +5,29 @@ import { MakerDeb } from "@electron-forge/maker-deb";
 import { MakerRpm } from "@electron-forge/maker-rpm";
 
 import { VitePlugin } from "@electron-forge/plugin-vite";
+import { AutoUnpackNativesPlugin } from "@electron-forge/plugin-auto-unpack-natives";
 
 const config: ForgeConfig = {
-  packagerConfig: {},
-  rebuildConfig: {},
+  packagerConfig: {
+    asar: true,
+    ignore: [
+      /^\/src/, // Source files (built by Vite)
+      /^\/tests/, // Test files
+      /^\/examples/, // Example files
+      /^\/\.vscode/, // VS Code settings
+      /^\/forge\.config\.ts$/, // This config file
+      /^\/vite\.\w+\.config\.\w+$/, // Vite configs
+      /^\/tsconfig\.json$/, // TypeScript config
+      /^\/\.eslintrc/, // ESLint config
+      /^\/\.gitignore$/, // Git ignore
+      /^\/README\.md$/, // Readme
+      /^\/package-lock\.json$/, // Lock file
+    ],
+  },
+  rebuildConfig: {
+    onlyModules: [],
+    force: false,
+  },
   makers: [
     new MakerSquirrel({}),
     new MakerZIP({}, ["darwin"]),
@@ -37,6 +56,7 @@ const config: ForgeConfig = {
         },
       ],
     }),
+    new AutoUnpackNativesPlugin({}),
   ],
 };
 
