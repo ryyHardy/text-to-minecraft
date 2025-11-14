@@ -79,6 +79,7 @@ Players can issue commands to the bot through Minecraft's chat window by pressin
 - Consider using (and learning) Tailwind for styling. The CSS is really unwieldly right now.
 - The bot has little to no awareness of its surroundings which is dangerous on more populated worlds.
 - Potentially making a version of the bot that is more friendly for survival mode.
+- I don't know why, but when I returned to this project months later, the builds it created were much smaller. Perhaps the Gemini model I was using got nerfed? :O
 - Make a release!
 
 <!--

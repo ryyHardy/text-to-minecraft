@@ -3,6 +3,9 @@ import { validateLLMKey } from "./ai/model";
 import { createPlayer, TextMCBot } from "./bot";
 import { getSecret, removeSecret, setSecret } from "./config/secrets";
 
+import { on, logger } from "./logging";
+import { attachBotObserver } from "./bot-observer";
+
 /** Manages the lifetime of all bot instances, indexed by username */
 const botInstances = new Map<string, TextMCBot>();
 
@@ -57,17 +60,38 @@ function initBotIPC() {
     ) => {
       try {
         const player = await createPlayer(host, port, username);
+
+        attachBotObserver(player);
+
+        const unsubscribe = on(e => {
+          event.sender.send("log-event", e);
+        });
+
         // Listen for bot disconnect and have the Main process send when that happens
         player.once("end", reason => {
           player.removeAllListeners();
           botInstances.delete(username);
+          unsubscribe();
           event.sender.send("bot-disconnected", username, reason);
         });
 
         botInstances.set(username, new TextMCBot(player, exclusiveUsers));
 
+        logger.info({
+          category: "connection",
+          bot: username,
+          message: "Connected",
+          data: { host, port },
+        });
+
         return { success: true, username };
       } catch (error) {
+        logger.error({
+          category: "connection",
+          bot: username,
+          message: "Connection failed",
+          data: { host, port, error: error?.message },
+        });
         return { success: false, error: error.message };
       }
     }
