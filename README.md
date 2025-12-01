@@ -41,7 +41,7 @@ edit autoexec.bat
 0. Own Minecraft Java Edition (check [mineflayer](https://github.com/PrismarineJS/mineflayer) for supported versions). Bedrock Edition is not supported yet.
 1. Clone the repository on your machine, and open a command line in that directory.
 2. Run `npm install` to install dependencies.
-3. Run `npm start` and this will open the desktop app.
+3. Run `npm run package` to create an executable app. In development, run `npm start` to open the app in dev mode.
 
 NOTE: The first time you run the app, it will prompt you to enter a Gemini API key, which you can get for free (with a solid free tier) using [Google AI Studio](https://aistudio.google.com/).
 
