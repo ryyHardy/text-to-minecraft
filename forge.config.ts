@@ -9,7 +9,7 @@ import { AutoUnpackNativesPlugin } from "@electron-forge/plugin-auto-unpack-nati
 
 const config: ForgeConfig = {
   packagerConfig: {
-    asar: true,
+    asar: false,
     ignore: [
       /^\/src/, // Source files (built by Vite)
       /^\/tests/, // Test files
